@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardview_creation_exercise"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="5dp"
+    android:layout_marginTop="25dp"
+    android:layout_marginEnd="5dp"
+    app:cardBackgroundColor="@color/dark_blue"
+    app:cardCornerRadius="@dimen/scale_14dp"
+    app:cardElevation="@dimen/scale_10dp"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/edit_text_creation_exercise_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="15dp"
+            android:gravity="center_vertical|start"
+            android:background="@null"
+            android:lines="1"
+            android:ellipsize="end"
+            android:inputType="textAutoComplete"
+            android:text="WorkWorkWorkWork"
+            android:textColor="@color/ivory"
+            android:textSize="@dimen/medium_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/button_item_creation_decrement_exercise_timer"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="WorkWorkWorkWork" />
+
+        <Button
+            android:id="@+id/button_item_creation_decrement_exercise_timer"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="110dp"
+            android:backgroundTint="@color/dark_blue"
+            android:text="-"
+            android:textSize="@dimen/buttons_text_size"
+            app:layout_constraintBottom_toBottomOf="@id/edit_text_creation_exercise_name"
+            app:layout_constraintEnd_toStartOf="@id/edit_text_timer_item_exercise_creation"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/edit_text_creation_exercise_name" />
+
+        <EditText
+            android:id="@+id/edit_text_timer_item_exercise_creation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:inputType="time"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="00:30"
+            android:textColor="@color/ivory"
+            android:textSize="@dimen/medium_text_size"
+            app:layout_constraintBottom_toBottomOf="@id/edit_text_creation_exercise_name"
+            app:layout_constraintEnd_toStartOf="@id/button_item_creation_increment_exercise_timer"
+            app:layout_constraintStart_toEndOf="@id/button_item_creation_decrement_exercise_timer"
+            app:layout_constraintTop_toTopOf="@id/edit_text_creation_exercise_name"
+            tools:text="00:30" />
+
+        <Button
+            android:id="@+id/button_item_creation_increment_exercise_timer"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/dark_blue"
+            android:text="+"
+            android:textSize="@dimen/buttons_text_size"
+            app:layout_constraintBottom_toBottomOf="@id/edit_text_creation_exercise_name"
+            app:layout_constraintEnd_toStartOf="@id/image_button_creation_exercise_menu"
+            app:layout_constraintStart_toEndOf="@id/edit_text_timer_item_exercise_creation"
+            app:layout_constraintTop_toTopOf="@id/edit_text_creation_exercise_name" />
+
+        <ImageButton
+            android:id="@+id/image_button_creation_exercise_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:backgroundTint="@color/dark_blue"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_more_white"
+            app:layout_constraintBottom_toBottomOf="@id/edit_text_creation_exercise_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/button_item_creation_increment_exercise_timer"
+            app:layout_constraintTop_toTopOf="@id/edit_text_creation_exercise_name"
+            app:tint="@color/ivory" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

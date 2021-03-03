@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/sessionFragment">
+    <fragment
+        android:id="@+id/sessionFragment"
+        android:name="com.HitatHomeTimer.ui.session.SessionFragment"
+        android:label="fragment_workout_session"
+        tools:layout="@layout/fragment_workout_session" >
+        <action
+            android:id="@+id/action_sessionFragment_to_practiceFragment"
+            app:destination="@id/practiceFragment" />
+        <action
+            android:id="@+id/action_sessionFragment_to_createSessionFragment"
+            app:destination="@id/createSessionFragment" />
+        <argument
+            android:name="session"
+            app:argType="com.HitatHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/practiceFragment"
+        android:name="com.HitatHomeTimer.ui.practice.PracticeFragment"
+        android:label="fragment_practice"
+        tools:layout="@layout/fragment_practice" >
+        <argument
+            android:name="sessionWith"
+            app:argType="com.HitatHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/createSessionFragment"
+        android:name="com.HitatHomeTimer.ui.addeditsession.CreateSessionFragment"
+        android:label="fragment_create_session"
+        tools:layout="@layout/fragment_create_session" >
+        <argument
+            android:name="shit"
+            app:argType="com.HitatHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_createSessionFragment_to_sessionFragment"
+            app:destination="@id/sessionFragment" />
+    </fragment>
+</navigation>

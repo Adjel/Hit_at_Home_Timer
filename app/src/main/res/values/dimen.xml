@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="scale_7dp">7dp</dimen>
+    <dimen name="scale_5dp">5dp</dimen>
+    <dimen name="scale_14dp">14dp</dimen>
+    <dimen name="scale_10dp">10dp</dimen>
+    <dimen name="item_workout_recyclerview_padding_5dp">5dp</dimen>
+
+
+    <dimen name="little_text_size">15sp</dimen>
+    <dimen name="medium_text_size">17sp</dimen>
+    <dimen name="buttons_text_size">20dp</dimen>
+    <dimen name="title_text_size">20sp</dimen>
+    <dimen name="title_large_text_size">25sp</dimen>
+    <dimen name="large_button_text_size">25sp</dimen>
+
+    <dimen name="countdown_text_size">70dp</dimen>
+</resources>

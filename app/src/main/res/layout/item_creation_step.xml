@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+
+        android:id="@+id/cardview_create_step"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/independence"
+        app:cardBackgroundColor="@color/independence"
+        app:cardCornerRadius="@dimen/scale_14dp"
+        app:cardElevation="@dimen/scale_10dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/text_view_sets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="30dp"
+                android:paddingTop="@dimen/item_workout_recyclerview_padding_5dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="@dimen/item_workout_recyclerview_padding_5dp"
+                android:text="@string/creation_sets"
+                android:textColor="@color/khaki_web_bone"
+                android:textSize="@dimen/little_text_size"
+                app:layout_constraintBottom_toTopOf="@id/recycler_view_creation_exercise"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/text_view_creation_step_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/text_view_sets"
+                android:layout_gravity="center_vertical"
+                android:padding="10dp"
+                android:layout_toRightOf="@id/button_creation_decrement_sets"
+                android:clickable="false"
+                android:focusable="false"
+                android:text="x2"
+                android:textColor="@color/khaki_web_bone"
+                android:textSize="@dimen/little_text_size"
+                app:layout_constraintBottom_toBottomOf="@id/text_view_sets"
+                app:layout_constraintEnd_toStartOf="@id/button_creation_increment_sets"
+                app:layout_constraintStart_toEndOf="@id/button_creation_decrement_sets"
+                app:layout_constraintTop_toTopOf="@id/text_view_sets"
+                tools:text="x10" />
+
+            <Button
+                android:id="@+id/button_creation_decrement_sets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/text_view_sets"
+                android:layout_toRightOf="@id/text_view_sets"
+                android:text="-"
+                android:textSize="@dimen/buttons_text_size"
+                app:layout_constraintBottom_toBottomOf="@id/button_creation_increment_sets"
+                app:layout_constraintEnd_toStartOf="@id/text_view_creation_step_time"
+                app:layout_constraintStart_toEndOf="@id/text_view_sets"
+                app:layout_constraintTop_toTopOf="@id/button_creation_increment_sets" />
+
+            <Button
+                android:id="@+id/button_creation_increment_sets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/text_view_sets"
+                android:layout_toRightOf="@id/text_view_creation_step_time"
+                android:text="+"
+                android:textSize="@dimen/buttons_text_size"
+                app:layout_constraintBottom_toBottomOf="@id/text_view_sets"
+                app:layout_constraintEnd_toStartOf="@id/image_button_creation_sets_menu"
+                app:layout_constraintStart_toEndOf="@id/text_view_creation_step_time"
+                app:layout_constraintTop_toTopOf="@id/text_view_sets" />
+
+            <ImageButton
+                android:id="@+id/image_button_creation_sets_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/text_view_sets"
+                android:layout_alignBottom="@id/text_view_sets"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/item_menu_button_margin_end"
+                android:layout_toRightOf="@id/button_creation_increment_sets"
+                android:backgroundTint="@color/independence"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_more_white"
+                app:layout_constraintBottom_toBottomOf="@id/text_view_sets"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/text_view_sets"
+                app:tint="@color/ivory" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_creation_exercise"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                app:layout_constraintBottom_toTopOf="@id/frame_layout_button_creation_add_exercise"
+                app:layout_constraintTop_toBottomOf="@id/text_view_sets"
+                tools:listitem="@layout/item_creation_exercise" />
+
+            <FrameLayout
+                android:id="@+id/frame_layout_button_creation_add_exercise"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="15dp"
+                android:elevation="2dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/buttons_border"
+                app:layout_constraintTop_toBottomOf="@id/recycler_view_creation_exercise"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" >
+
+            <Button
+                android:id="@+id/button_creation_add_exercise"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/add_a_new_exercise"
+                android:drawableLeft="@drawable/ic_add"
+                android:drawableTint="@color/ivory"
+                android:elevation="0dp"
+                android:singleLine="true"
+                android:text="@string/add_new_exercise_in_step"
+                app:layout_constraintTop_toBottomOf="@id/recycler_view_creation_exercise"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            </FrameLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
