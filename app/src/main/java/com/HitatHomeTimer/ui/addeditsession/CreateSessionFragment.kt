@@ -1,42 +1,32 @@
 package com.HitatHomeTimer.ui.addeditsession
 
-import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
 import androidx.fragment.app.Fragment
 import android.view.View
-import android.widget.TextView
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.HitatHomeTimer.di.SessionApplication
-import com.HitatHomeTimer.repository.localdata.entities.Exercise
-import com.HitatHomeTimer.repository.localdata.entities.Session
-import com.HitatHomeTimer.repository.localdata.SessionDatabase
-import com.HitatHomeTimer.repository.localdata.entities.Step
 import com.HitatHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises
 import com.HitatHomeTimer.repository.localdata.relations.StepWithExercises
-import com.HitatHomeTimer.ui.practice.PracticeFragmentArgs
 import com.hitathometimer.R
 import com.hitathometimer.databinding.FragmentCreateSessionBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 
-class CreateSessionFragment : Fragment(R.layout.fragment_create_session),
-    CreateSessionListParentAdapter.OnItemClickListener {
+class CreateSessionFragment : Fragment(R.layout.fragment_create_session) {
 
     private val args: CreateSessionFragmentArgs by navArgs()
     private val createSessionListParentAdapter = CreateSessionListParentAdapter(this)
 
-    private val createSessionViewModel: CreateSessionViewModel by viewModels{
+    val createSessionViewModel: CreateSessionViewModel by viewModels{
         CreateSessionViewModelFactory(
             this,
-            (requireActivity().application as SessionApplication).repository
+            (requireActivity().application as SessionApplication).repository,
+            args.toBundle()
         )
     }
 
@@ -45,9 +35,6 @@ class CreateSessionFragment : Fragment(R.layout.fragment_create_session),
 
         val binding = FragmentCreateSessionBinding.bind(view)
 
-//       val dao = SessionDatabase.getInstance(this.requireContext(), CoroutineScope(SupervisorJob())).sessionDao()
-//
-//
 //        val yoga = Session("Reprise")
 //        val firstStep = Step(timesNumber = 2)
 //        val secondStep = Step(timesNumber = 2)
@@ -66,28 +53,61 @@ class CreateSessionFragment : Fragment(R.layout.fragment_create_session),
 //
 //
 //        lifecycleScope.launch {
-//            dao.insertSessionWithStepsAndExercises(sessionWithStepsAndExercises)
+//            createSessionViewModel.insertSessionWithStepsAndExercises(sessionWithStepsAndExercises)
 //        }
 
+
         binding.apply {
-                textViewCreationStepName.setText(createSessionViewModel.sessionWithStepsAndExercises.value?.session?.name)
-            Log.d("CreateSession", "onViewCreated: ${createSessionViewModel.sessionWithStepsAndExercises.value?.session?.name}")
+            createSessionViewModel.sessionWithStepsAndExercises.observe(viewLifecycleOwner) {
+                editTextViewCreationStepName.setText(it?.session?.name)
+
+                editTextViewCreationStepName.addTextChangedListener { editable ->
+                    if (editable != null) {
+                        if (editable.isNotEmpty()) {
+                            createSessionViewModel.sessionWithStepsAndExercises.value?.session?.name =
+                                editable.toString()
+                        }
+                    }
+                }
+            }
 
             recyclerViewCreationStep.apply {
                 adapter = createSessionListParentAdapter
                 layoutManager = LinearLayoutManager(requireContext())
-                setHasFixedSize(true)
+                itemAnimator = null
+
+                createSessionListParentAdapter.event.observe(
+                    viewLifecycleOwner) {
+                    createSessionViewModel.handleEvent(it)
+                }
+            }
+
+            buttonCreationAddSet.setOnClickListener {
+                createSessionViewModel.handleEvent(CreationListEvent.OnNewStepClicked)
+            }
+
+            buttonSaveSession.setOnClickListener {
+                // TODO
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            createSessionListParentAdapter.submitList(createSessionViewModel.sessionWithStepsAndExercises.value?.stepList)
-            Log.d("CreateSession", "onViewCreated: ${createSessionViewModel.sessionWithStepsAndExercises.value?.stepList}")
+        createSessionViewModel.sessionWithStepsAndExercises.observe(viewLifecycleOwner) {
+            createSessionListParentAdapter.submitList(
+                null
+            )
+            createSessionListParentAdapter.submitList(
+                it.stepList.toMutableList()
+            )
+
+            Log.d("CreateSessionFragment", "onViewCreated: session: ${it}")
+
+            Log.d("CreateSessionFragment", "onViewCreated: session.stepList ${it}")
+
         }
-
     }
 
-    override fun newStepWithExercise() {
-        TODO("Not yet implemented")
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.create_step_item_menu, menu)
     }
+
 }

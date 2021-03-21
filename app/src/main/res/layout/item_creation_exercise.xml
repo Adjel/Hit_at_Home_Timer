@@ -26,7 +26,6 @@
             android:layout_marginStart="15dp"
             android:gravity="center_vertical|start"
             android:background="@null"
-            android:lines="1"
             android:ellipsize="end"
             android:inputType="textAutoComplete"
             android:text="WorkWorkWorkWork"

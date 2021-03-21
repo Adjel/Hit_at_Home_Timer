@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity(
-    tableName = "step_table",
+    tableName = "step_table", indices = [Index(value = ["sessionOwnerId","timesNumber","stepId"], unique = true)],
     foreignKeys = [
         ForeignKey(
             // deferred = true,
@@ -20,8 +20,8 @@ import kotlinx.parcelize.Parcelize
     ]
 )
 data class Step(
-    val sessionOwnerId: Long = 0,
-    val timesNumber: Long = 1,
+    val sessionOwnerId: Long = 0L,
+    var timesNumber: Long = 1L,
     @PrimaryKey(autoGenerate = true)
-    val stepId: Long = 0
+    val stepId: Long = 0L
 ) : Parcelable

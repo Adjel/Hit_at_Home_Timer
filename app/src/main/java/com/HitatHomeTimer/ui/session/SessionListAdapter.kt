@@ -3,7 +3,6 @@ package com.HitatHomeTimer.ui.session
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -45,9 +44,8 @@ class SessionListAdapter(private val listener: OnItemClickListener) :
                             when (item.itemId) {
                                 R.id.session_item_menu_edit ->
                                     listener.onItemButtonMenuEdit(sessionWithStepsAndExercises)
-//                                    Toast.makeText(imageButtonMenuItemSession.context, "You Clicked : " + item.title, Toast.LENGTH_SHORT).show()
-                                R.id.session_item_menu_copy ->
-                                    Toast.makeText(imageButtonMenuItemSession.context, "You Clicked : " + item.title, Toast.LENGTH_SHORT).show()
+                                R.id.session_item_menu_duplicate ->
+                                   listener.onItemButtonMenuDuplicate(sessionWithStepsAndExercises)
                                 R.id.session_item_menu_delete ->
                                         listener.onItemButtonMenuDelete(session)
                             }
@@ -60,10 +58,10 @@ class SessionListAdapter(private val listener: OnItemClickListener) :
         }
 
 
-        fun bind(session: Session) {
+        fun bind(sessionWithStepsAndExercises: SessionWithStepsAndExercises) {
             binding.apply {
-                textViewItemSessionName.text = session.name
-                textViewItemSessionDuration.text = session.timeFormatted
+                textViewItemSessionName.text = sessionWithStepsAndExercises.session.name
+                textViewItemSessionDuration.text = sessionWithStepsAndExercises.timeFormatted
             }
         }
     }
@@ -73,6 +71,7 @@ class SessionListAdapter(private val listener: OnItemClickListener) :
         fun onItemClick(sessionWithStepsAndExercises: SessionWithStepsAndExercises)
         fun onItemButtonMenuDelete(session: Session)
         fun onItemButtonMenuEdit(sessionWithStepsAndExercises: SessionWithStepsAndExercises)
+        fun onItemButtonMenuDuplicate(sessionWithStepsAndExercises: SessionWithStepsAndExercises)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder {
@@ -86,7 +85,7 @@ class SessionListAdapter(private val listener: OnItemClickListener) :
 
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
         val currentItem = getItem(holder.adapterPosition)
-        holder.bind(currentItem.session)
+        holder.bind(currentItem)
     }
 
 

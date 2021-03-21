@@ -4,16 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
+    android:layout_height="wrap_content"
     tools:context="com.HitatHomeTimer.ui.addeditsession.CreateSessionFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardview_create_session_name"
@@ -24,8 +20,11 @@
             app:cardCornerRadius="@dimen/scale_14dp"
             app:cardElevation="@dimen/scale_10dp"
             app:cardUseCompatPadding="true"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@id/recycler_view_creation_step"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -44,7 +43,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/text_view_creation_step_name"
+                    android:id="@+id/edit_text_view_creation_step_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:autofillHints="Workout"
@@ -52,7 +51,8 @@
                     android:layout_marginEnd="15dp"
                     android:background="@null"
                     android:ellipsize="end"
-                    android:focusable="false"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:foregroundGravity="center_horizontal"
                     android:inputType="textAutoComplete"
                     android:singleLine="true"
@@ -74,11 +74,13 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/cardview_creation_step"
             app:layout_constraintTop_toBottomOf="@id/cardview_create_session_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:listitem="@layout/item_creation_step" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardview_creation_step"
-            android:layout_width="300dp"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
             android:overScrollMode="never"
@@ -120,7 +122,9 @@
             android:textSize="@dimen/large_button_text_size"
             app:backgroundTint="@color/khaki_web_bone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardview_creation_step" />
+            app:layout_constraintTop_toBottomOf="@id/cardview_creation_step"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

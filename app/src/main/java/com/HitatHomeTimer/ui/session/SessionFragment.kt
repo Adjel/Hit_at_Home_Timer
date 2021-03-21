@@ -1,15 +1,12 @@
 package com.HitatHomeTimer.ui.session
 
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavArgs
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -30,12 +27,14 @@ class SessionFragment : Fragment(R.layout.fragment_workout_session),
     private lateinit var navController: NavController
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var floatingActionButton: FloatingActionButton
+    private val sessionListAdapter = SessionListAdapter(this)
     private val args: SessionFragmentArgs by navArgs()
 
     private val sessionViewModel: SessionViewModel by viewModels{
             SessionViewModelFactory(
                 ((requireActivity().application as SessionApplication).repository),
-                args.session
+                this,
+                args.toBundle()
             )
     }
 
@@ -47,8 +46,9 @@ class SessionFragment : Fragment(R.layout.fragment_workout_session),
 
         bottomNavigationView =
             requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
-        val sessionListAdapter = SessionListAdapter(this)
+
         navController = view.findNavController()
+
         floatingActionButton =
             requireActivity().findViewById<FloatingActionButton>(R.id.floating_action_button_add_session)
 
@@ -81,6 +81,11 @@ class SessionFragment : Fragment(R.layout.fragment_workout_session),
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.session_item_menu, menu)
+    }
+
+
     override fun onItemClick(sessionWithStepsAndExercises: SessionWithStepsAndExercises) {
         val action = SessionFragmentDirections.actionSessionFragmentToPracticeFragment(
             sessionWithStepsAndExercises
@@ -90,7 +95,7 @@ class SessionFragment : Fragment(R.layout.fragment_workout_session),
     }
 
     override fun onItemButtonMenuDelete(session: Session) {
-        sessionViewModel.deleteSession(session)
+        sessionViewModel.onDeleteSessionClicked(session)
     }
 
     override fun onItemButtonMenuEdit(sessionWithStepsAndExercises: SessionWithStepsAndExercises) {
@@ -102,8 +107,11 @@ class SessionFragment : Fragment(R.layout.fragment_workout_session),
         sessionViewModel.setFloatingActionButtonColor(floatingActionButton, this.requireView())
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.session_item_menu, menu)
-//        val deleteItem = menu.findItem(R.id.session_item_menu_delete)
+    override fun onItemButtonMenuDuplicate(sessionWithStepsAndExercises: SessionWithStepsAndExercises) {
+        sessionViewModel.onDuplicateSessionClicked(sessionWithStepsAndExercises)
+            val action = SessionFragmentDirections.actionSessionFragmentToCreateSessionFragment(sessionWithStepsAndExercises)
+            navController.navigate(action)
     }
+
+
 }

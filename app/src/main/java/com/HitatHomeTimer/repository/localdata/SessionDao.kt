@@ -16,43 +16,53 @@ interface SessionDao {
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertSessionWithStepsAndExercises(sessionWithStepsExerciseList: SessionWithStepsAndExercises) {
+    suspend fun insertSessionWithStepsAndExercises(sessionWithStepsExercise: SessionWithStepsAndExercises) {
 
-        var sessionTime = 0L
-
-        sessionWithStepsExerciseList.stepList.forEach { step ->
-            step.exerciseLists.forEach { exercise ->
-                sessionTime += step.step.timesNumber * exercise.timer
-            }
-        }
-
-        val sessionId = insertSession(sessionWithStepsExerciseList.session.copy(time = sessionTime))
-        sessionWithStepsExerciseList.stepList.forEach { stepList ->
-            val stepId = insertStep(stepList.step.copy(sessionOwnerId = sessionId))
+        val sessionId = insertSession(sessionWithStepsExercise.session.copy(sessionId = 0))
+        sessionWithStepsExercise.stepList.forEach { stepList ->
+            val stepId = insertStep(stepList.step.copy(sessionOwnerId = sessionId, stepId = 0))
             stepList.exerciseLists.forEach { exercise ->
-                insertExercise(exercise.copy(stepOwnerId = stepId))
+                insertExercise(exercise.copy(stepOwnerId = stepId, exerciseId = 0))
             }
         }
     }
-
 
     @Transaction
     @Query("SELECT * FROM session_table")
     fun getAllSessionWithStepsAndExercises(): Flow<List<SessionWithStepsAndExercises>>
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertStepWithExercises(step: Step, exerciseList: List<Exercise>) {
-        val stepId = insertStep(step)
-        if (stepId == -1L) {
-            // TODO : Throw a message to user because saved failed
-            Log.d("Dao", "insertStepWithExercises: Long = -1")
-        } else {
-            exerciseList.forEach { exercise ->
-                insertExercise(exercise.copy(stepOwnerId = stepId))
-            }
-        }
-    }
+    @Query("SELECT * FROM session_table WHERE sessionId = :sessionId")
+    fun getSessionWithStepsAndExercisesById(sessionId: Long): Flow<SessionWithStepsAndExercises>
+
+    @Update
+    suspend fun updateStep(step: Step)
+
+    @Update
+    suspend fun updateExercise(exercise: Exercise)
+
+    @Delete
+    suspend fun deleteSession(session: Session)
+
+    @Delete
+    suspend fun deleteStep(step: Step)
+
+    @Delete
+    suspend fun deleteExercise(exercise: Exercise)
+
+//    @Transaction
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun insertStepWithExercises(step: Step, exerciseList: List<Exercise>) {
+//        val stepId = insertStep(step)
+//        if (stepId == -1L) {
+//            // TODO : Throw a message to user because saved failed
+//            Log.d("Dao", "insertStepWithExercises: Long = -1")
+//        } else {
+//            exerciseList.forEach { exercise ->
+//                insertExercise(exercise.copy(stepOwnerId = stepId))
+//            }
+//        }
+//    }
 
     @Query("DELETE FROM session_table")
     suspend fun deleteAllSessionWithStepsAndExercises()
@@ -74,7 +84,7 @@ interface SessionDao {
 
     @Transaction
     @Query("SELECT * FROM step_table")
-    fun getStepsWithExercises(): List<StepWithExercises>
+    fun getStepsWithExercises(): Flow<List<StepWithExercises>>
 
     @Transaction
     @Query("SELECT * FROM step_table WHERE stepId = :stepId")
@@ -84,13 +94,6 @@ interface SessionDao {
     @Transaction
     @Query("SELECT * FROM session_table WHERE sessionId = :sessionOwnerId")
     fun getStepAndSessionsWithSessionOwnerId(sessionOwnerId: Long): List<SessionWithSteps>
-
-    @Transaction
-    @Query("SELECT * FROM session_table WHERE sessionId = :sessionOwnerId")
-    fun getSessionWithStepsAndExercisesById(sessionOwnerId: Long): Flow<List<SessionWithStepsAndExercises>>
-
-    @Delete
-    suspend fun deleteSession(session: Session)
 
 //    @Update
 //    suspend fun updateSession(session: Session)

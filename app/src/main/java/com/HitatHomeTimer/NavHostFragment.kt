@@ -11,7 +11,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.hitathometimer.R
 
-class NavHostFragment() : AppCompatActivity() {
+class NavHostFragment : AppCompatActivity() {
 
     private lateinit var navController: NavController
     private lateinit var addSessionFloatingActionButton: FloatingActionButton
