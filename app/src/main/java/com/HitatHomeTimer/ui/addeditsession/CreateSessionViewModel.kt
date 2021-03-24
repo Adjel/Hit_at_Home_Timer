@@ -1,7 +1,6 @@
 package com.HitatHomeTimer.ui.addeditsession
 
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.*
 import androidx.savedstate.SavedStateRegistryOwner
 import com.HitatHomeTimer.repository.SessionRepository
@@ -18,6 +17,7 @@ class CreateSessionViewModel(
     private val repository: SessionRepository,
 ) : ViewModel() {
 
+    // get data from SavedStateHandle and set LiveData to be observed
     private val newSessionWithStepsAndExercises = createNewSession()
 
     private val stateHandleSession =
@@ -32,59 +32,43 @@ class CreateSessionViewModel(
         }
 
 
-
-
+    // edit SessionWithStepsAndExercises functions and read events
 
     private fun onCreateNewExercise(adapterPosition: Int) = viewModelScope.launch {
-
         mutableSessionWithStepsAndExercises.value?.stepList?.get(adapterPosition)?.exerciseLists =
-            mutableSessionWithStepsAndExercises.value?.stepList.orEmpty()[adapterPosition].exerciseLists.orEmpty().plusElement(
+            mutableSessionWithStepsAndExercises.value?.stepList.orEmpty()[adapterPosition].exerciseLists.plusElement(
                 Exercise("Work")
             )
 
         sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
     }
 
-    fun insertSessionWithStepsAndExercises(sessionWithStepsAndExercises: SessionWithStepsAndExercises) =
-        viewModelScope.launch {
-            repository.insertSessionWithStepsAndExercises(sessionWithStepsAndExercises)
-        }
-
-
-    val firstStepWithExercises: LiveData<List<StepWithExercises>> =
-        repository.firstStepWithExercise.asLiveData()
-
-
-
     private fun onUpdateStepTimer(adapterPosition: Int, updateTime: UpdateTimeNumber, timer: Long) = viewModelScope.launch  {
         when (updateTime) {
-            UpdateTimeNumber.INCREMENT -> {
 
+            UpdateTimeNumber.INCREMENT -> {
                 mutableSessionWithStepsAndExercises.value!!.copy().stepList[adapterPosition].step.timesNumber += 1
 
                 sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
             }
-            UpdateTimeNumber.DECREMENT -> {
 
+            UpdateTimeNumber.DECREMENT -> {
                 if (sessionWithStepsAndExercises.value!!.stepList[adapterPosition].step.timesNumber > 1) {
                     mutableSessionWithStepsAndExercises.value!!.stepList[adapterPosition].step.timesNumber -= 1
 
                     sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
                 }
             }
-            UpdateTimeNumber.EDIT -> {
-                Log.d("ViewModel", "edit: test1 adapterPosition = ${adapterPosition}" )
 
+            UpdateTimeNumber.EDIT -> {
                     mutableSessionWithStepsAndExercises.value!!.stepList[adapterPosition].step.timesNumber =
                         timer
-                    Log.d("ViewModel", "edit: ")
                 sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
             }
         }
     }
 
     private fun onDuplicateStep(stepWithExercises: StepWithExercises) = viewModelScope.launch {
-
         // get a copy of step and exercises (because liveData keep tracking first values and modifies it when base value is modified)
         val duplicateExercisesList = mutableListOf<Exercise>()
         (stepWithExercises.exerciseLists.forEach {
@@ -95,12 +79,10 @@ class CreateSessionViewModel(
         val duplicateStep = StepWithExercises(step = stepWithExercises.step.copy(), exerciseLists = duplicateExercisesList)
         mutableSessionWithStepsAndExercises.value?.stepList = mutableSessionWithStepsAndExercises.value!!.stepList.plusElement(duplicateStep)
 
-
         sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
     }
 
     private fun onCreateNewStep() = viewModelScope.launch {
-
         mutableSessionWithStepsAndExercises.value?.stepList =
             mutableSessionWithStepsAndExercises.value?.stepList?.plus(StepWithExercises(Step(), listOf(Exercise("Work"))))!!
 
@@ -109,7 +91,6 @@ class CreateSessionViewModel(
 
 
     private fun onDeleteStep(adapterPosition: Int) = viewModelScope.launch {
-
         mutableSessionWithStepsAndExercises.value?.stepList =
             mutableSessionWithStepsAndExercises.value?.stepList?.minus(sessionWithStepsAndExercises.value?.stepList?.get(adapterPosition)!!)!!
 
@@ -117,7 +98,6 @@ class CreateSessionViewModel(
     }
 
     private fun onDuplicateExercise(parentPosition: Int, exercise: Exercise) = viewModelScope.launch {
-
         // get a copy of exercise (because liveData keep tracking first values and modifies it when base value is modified)
         val duplicateExercise: Exercise = exercise.copy()
 
@@ -129,7 +109,6 @@ class CreateSessionViewModel(
 
 
     private fun onDeleteExercise(parentPosition: Int, position: Int) = viewModelScope.launch {
-
         mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists =
             mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists.minus(
                 mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists[position])
@@ -137,29 +116,22 @@ class CreateSessionViewModel(
         sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
     }
 
-
-
-
     private fun onUpdateExerciseTimer(parentPosition: Int, adapterPosition: Int, updateTime: UpdateTimeNumber, timer: Long) = viewModelScope.launch {
         when (updateTime) {
 
             UpdateTimeNumber.INCREMENT -> {
-
                 mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists[adapterPosition].timer += 1000L
-
                 sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
             }
-            UpdateTimeNumber.DECREMENT -> {
 
+            UpdateTimeNumber.DECREMENT -> {
                 if (sessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists[adapterPosition].timer > 1000L) {
                     mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists[adapterPosition].timer -= 1000L
-
                     sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
                 }
             }
-            UpdateTimeNumber.EDIT -> {
-                Log.d("TextWatcher", "onUpdateExerciseName timer = $timer")
 
+            UpdateTimeNumber.EDIT -> {
                 mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists[adapterPosition].timer =
                         timer
                 sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
@@ -168,31 +140,12 @@ class CreateSessionViewModel(
     }
 
     private fun onUpdateExerciseName(parentPosition: Int, adapterPosition: Int, newName: String) = viewModelScope.launch {
-        Log.d("TextWatcher", "onUpdateExerciseName newName = $newName")
-
         mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists[adapterPosition].name =
             newName
-
         sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
     }
 
-
-//    fun onStepButtonDeleteClicked(step: Step) = viewModelScope.launch { repository.deleteStep(step) }
-
-    private fun createNewSession() = MutableLiveData<SessionWithStepsAndExercises>(
-        SessionWithStepsAndExercises(
-            Session("Workout"),
-            stepList = listOf(
-                StepWithExercises(
-                    Step(),
-                    exerciseLists = listOf(
-                        Exercise(
-                            "wooork", timer = 30000
-                        ),
-                        Exercise("Rest", timer = 15000)
-                    )))))
-
-
+    // retrieve and decide which event and what it will trigger
     fun handleEvent(event: CreationListEvent) {
         when (event) {
 
@@ -210,10 +163,35 @@ class CreateSessionViewModel(
             is CreationListEvent.OnDeleteExerciseClicked -> onDeleteExercise(event.parentPosition, event.position)
         }
     }
+
+    private fun createNewSession() = MutableLiveData(
+        SessionWithStepsAndExercises(
+            Session("Workout"),
+            stepList = listOf(
+                StepWithExercises(
+                    Step(),
+                    exerciseLists = listOf(
+                        Exercise(
+                            "wooork", timer = 30000
+                        ),
+                        Exercise("Rest", timer = 15000)
+                    )))))
+
+    fun insertSessionWithStepsAndExercises(sessionWithStepsAndExercises: SessionWithStepsAndExercises) =
+        viewModelScope.launch {
+            repository.insertSessionWithStepsAndExercises(sessionWithStepsAndExercises)
+        }
+
+    
+    val firstStepWithExercises: LiveData<List<StepWithExercises>> =
+        repository.firstStepWithExercise.asLiveData()
+
 }
 
+ // enum class to tell to event what type of event it is
 enum class UpdateTimeNumber { INCREMENT , DECREMENT, EDIT }
 
+// declare events types
 sealed class CreationListEvent {
 
     // Edit Steps
