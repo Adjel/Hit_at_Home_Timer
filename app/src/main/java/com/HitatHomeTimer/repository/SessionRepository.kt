@@ -1,8 +1,6 @@
 package com.HitatHomeTimer.repository
 
-import android.util.Log
 import androidx.annotation.WorkerThread
-import androidx.room.Update
 import com.HitatHomeTimer.repository.localdata.SessionDao
 import com.HitatHomeTimer.repository.localdata.entities.Exercise
 import com.HitatHomeTimer.repository.localdata.entities.Session
@@ -27,6 +25,9 @@ class SessionRepository(private val sessionDao: SessionDao) {
     fun getSessionWithStepsAndExercisesById(sessionOwnerId: Long): Flow<SessionWithStepsAndExercises> =
         sessionDao.getSessionWithStepsAndExercisesById(sessionOwnerId)
 
+    suspend fun upsertSession(sessionWithStepsAndExercises: SessionWithStepsAndExercises) {
+        sessionDao.upsertSession(sessionWithStepsAndExercises)
+    }
 
     suspend fun updateStep(step: Step) {
         sessionDao.updateStep(step)

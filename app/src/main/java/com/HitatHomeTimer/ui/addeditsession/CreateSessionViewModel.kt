@@ -145,6 +145,12 @@ class CreateSessionViewModel(
         sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
     }
 
+    fun saveSessionClicked() {
+        viewModelScope.launch {
+            repository.upsertSession(sessionWithStepsAndExercises.value!!)
+        }
+    }
+
     // retrieve and decide which event and what it will trigger
     fun handleEvent(event: CreationListEvent) {
         when (event) {
@@ -176,15 +182,6 @@ class CreateSessionViewModel(
                         ),
                         Exercise("Rest", timer = 15000)
                     )))))
-
-    fun insertSessionWithStepsAndExercises(sessionWithStepsAndExercises: SessionWithStepsAndExercises) =
-        viewModelScope.launch {
-            repository.insertSessionWithStepsAndExercises(sessionWithStepsAndExercises)
-        }
-
-    
-    val firstStepWithExercises: LiveData<List<StepWithExercises>> =
-        repository.firstStepWithExercise.asLiveData()
 
 }
 

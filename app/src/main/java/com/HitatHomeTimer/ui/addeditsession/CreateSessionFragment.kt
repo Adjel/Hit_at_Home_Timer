@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.HitatHomeTimer.di.SessionApplication
@@ -61,7 +62,9 @@ class CreateSessionFragment : Fragment(R.layout.fragment_create_session) {
             }
 
             buttonSaveSession.setOnClickListener {
-                // TODO
+                createSessionViewModel.saveSessionClicked()
+                val action = CreateSessionFragmentDirections.actionCreateSessionFragmentToSessionFragment()
+                this@CreateSessionFragment.findNavController().navigate(action)
             }
         }
 

@@ -35,6 +35,21 @@ interface SessionDao {
     @Query("SELECT * FROM session_table WHERE sessionId = :sessionId")
     fun getSessionWithStepsAndExercisesById(sessionId: Long): Flow<SessionWithStepsAndExercises>
 
+    @Transaction
+    suspend fun upsertSession(sessionWithStepsExercise: SessionWithStepsAndExercises) {
+        if (isSessionExist(sessionWithStepsExercise.session.sessionId)) {
+            // TODO create an upsert function
+            deleteSession(sessionWithStepsExercise.session)
+            insertSessionWithStepsAndExercises(sessionWithStepsExercise)
+        }
+        else {
+            insertSessionWithStepsAndExercises(sessionWithStepsExercise)
+        }
+    }
+
+    @Update
+    suspend fun updateSession(session: Session)
+
     @Update
     suspend fun updateStep(step: Step)
 
@@ -50,30 +65,14 @@ interface SessionDao {
     @Delete
     suspend fun deleteExercise(exercise: Exercise)
 
-//    @Transaction
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    suspend fun insertStepWithExercises(step: Step, exerciseList: List<Exercise>) {
-//        val stepId = insertStep(step)
-//        if (stepId == -1L) {
-//            // TODO : Throw a message to user because saved failed
-//            Log.d("Dao", "insertStepWithExercises: Long = -1")
-//        } else {
-//            exerciseList.forEach { exercise ->
-//                insertExercise(exercise.copy(stepOwnerId = stepId))
-//            }
-//        }
-//    }
-
     @Query("DELETE FROM session_table")
     suspend fun deleteAllSessionWithStepsAndExercises()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSession(session: Session): Long
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStep(step: Step): Long
-
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExercise(exercise: Exercise)
@@ -95,24 +94,10 @@ interface SessionDao {
     @Query("SELECT * FROM session_table WHERE sessionId = :sessionOwnerId")
     fun getStepAndSessionsWithSessionOwnerId(sessionOwnerId: Long): List<SessionWithSteps>
 
-//    @Update
-//    suspend fun updateSession(session: Session)
-//
-//    @Update
-//    suspend fun updateStep(step: Step)
-//
-//    @Update
-//    suspend fun updateExercise(exercise: Exercise)
-//
-//    @Update
-//    suspend fun updateAllSession(sessionWithStepsAndExercises: SessionWithStepsAndExercises)
-//
-//    @Delete
-//    suspend fun deleteSession(session: Session)
-//
-//    @Delete
-//    suspend fun deleteStep(step: Step)
-//
-//    @Delete
-//    fun deleteExercise(exercise: Exercise)
+    @Transaction
+    @Query("SELECT * FROM session_table WHERE sessionId = :sessionOwnerId")
+    fun isSessionExist(sessionOwnerId: Long): Boolean {
+        return sessionOwnerId > -1
+    }
+
 }
