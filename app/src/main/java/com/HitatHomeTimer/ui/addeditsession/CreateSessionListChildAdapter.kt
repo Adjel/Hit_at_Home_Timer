@@ -1,50 +1,45 @@
 package com.HitatHomeTimer.ui.addeditsession
 
-import android.annotation.SuppressLint
-import android.os.Build
-import android.text.Editable
-import android.text.TextWatcher
-import android.text.method.TextKeyListener.clear
+import android.app.Activity
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
-import android.widget.EditText
+import android.view.inputmethod.InputMethodManager
 import android.widget.PopupMenu
-import android.widget.TextView
-import androidx.annotation.RequiresApi
-import androidx.core.text.isDigitsOnly
-import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.HitatHomeTimer.repository.localdata.entities.Exercise
-import com.HitatHomeTimer.repository.localdata.relations.StepWithExercises
 import com.hitathometimer.R
 import com.hitathometimer.databinding.ItemCreationExerciseBinding
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.properties.Delegates
 
-class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent> = MutableLiveData() , private val parentPosition: CustomClickListener) :
+class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent> = MutableLiveData(), private val parentPosition: CustomClickListener) :
     ListAdapter<Exercise, CreateSessionListChildAdapter.CreateSessionChildViewHolder>(CreateExerciseListDiffCallback()) {
 
     inner class CreateSessionChildViewHolder(private val binding: ItemCreationExerciseBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
+        // close keyboard on editText and set focus to null
+        private fun closeKeyBoard(view: View) {
+            view.clearFocus()
+            val inputMethodManager  = view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+        }
 
         init {
 
+            // retrieve parent adapter's position
             val adapterParentPosition = parentPosition.onItemClick()
 
             binding.apply {
 
+                // menu popup to delete or duplicate an exercise
                 imageButtonCreationExerciseMenu.setOnClickListener {
 
                     if (adapterPosition != RecyclerView.NO_POSITION) {
@@ -58,7 +53,7 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                             R.menu.edit_step_and_exercise_item_menu,
                             popupMenu.menu
                         )
-                        popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
+                        popupMenu.setOnMenuItemClickListener { item ->
 
                             when (item.itemId) {
                                 R.id.session_item_menu_duplicate ->
@@ -73,7 +68,7 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                                     )
                             }
                             true
-                        })
+                        }
                         popupMenu.show()
                     }
                 }
@@ -81,9 +76,6 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                 buttonItemCreationIncrementExerciseTimer.setOnClickListener {
 
                     if (adapterPosition != RecyclerView.NO_POSITION) {
-
-                        Log.d("TextWatcher", "parentPos: ${adapterParentPosition}, ${adapterPosition}" )
-                        Log.d("TextWatcher", "exerciseList: ${getItem(adapterPosition)}" )
 
                         event.value = CreationListEvent.OnExerciseTimerChanged(
                             adapterParentPosition,
@@ -104,94 +96,164 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                     }
                 }
 
-//                editTextCreationExerciseName.setOnClickListener {
-//                    event.value = CreationListEvent.OnExerciseNameChanged(
-//                        adapterParentPosition,
-//                        adapterPosition,
-//                        newName = editTextCreationExerciseName.text.toString()
-//                    )
-//                    Log.d("TextWatcher", "newName: ${editTextCreationExerciseName.text.toString()}" )
-//                }
+                editTextCreationExerciseName.doAfterTextChanged { editableName ->
 
-                editTextCreationExerciseName.addTextChangedListener { editableName ->
+                    if (adapterPosition != RecyclerView.NO_POSITION) {
 
-                    if (editableName != null && editableName.isNotEmpty() && editableName.toString() != getItem(
+                        // input is send only if value changed and is not empty
+                        if (editableName != null && editableName.isNotEmpty() && editableName.toString() != getItem(
                             adapterPosition
-                        ).name
-                    ) {
+                            ).name
+                        ) {
 
-                        Log.d("TextWatcher", "onTextChanged: ${editableName}")
+                            // when user hit enter
+                            editTextCreationExerciseName.setOnKeyListener { _, keyCode, keyEvent ->
 
-                        event.value = CreationListEvent.OnExerciseNameChanged(
-                            adapterParentPosition,
-                            adapterPosition,
-                            editableName.toString()
-                        )
+                                if (keyEvent.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+
+                                    event.value = CreationListEvent.OnExerciseNameChanged(
+                                        adapterParentPosition,
+                                        adapterPosition,
+                                        editableName.toString()
+                                    )
+                                }
+                                // close the keyboard and tell to KeyListener that event is consumed
+                                closeKeyBoard(this.editTextCreationExerciseName)
+                                true
+                            }
+
+                            // get input when editText focus changed
+                            editTextCreationExerciseName.setOnFocusChangeListener { _, hasFocus ->
+
+                                if (!hasFocus) {
+
+                                    event.value = CreationListEvent.OnExerciseNameChanged(
+                                        adapterParentPosition,
+                                        adapterPosition,
+                                        editableName.toString()
+                                    )
+                                }
+                            }
+                        }
+
                     }
+
                 }
 
-//                editTextCreationExerciseName.addTextChangedListener { exerciseNameEditable ->
-//                    if (adapterPosition != RecyclerView.NO_POSITION) {
-//
-//                        Log.d(
-//                            "CreateSessionChild",
-//                            "doAfterTextChanged: BUG HERE = $adapterParentPosition"
-//                        )
-//
-//                        val exercise = getItem(adapterPosition)
-//
-//
-//                        if (exerciseNameEditable!!.isNotEmpty() && exerciseNameEditable.toString() != exercise.name) {
-//
-//                                Log.d(
-//                                    "CreateSessionChild",
-//                                    "doAfterTextChanged: editableToName: adapter parent POSITION = $adapterParentPosition"
-//                                )
-//                                event.value = CreationListEvent.OnExerciseNameChanged(
-//                                    adapterParentPosition, adapterPosition, exerciseNameEditable.toString()
-//                                )
-//                        }
-////                            else {
-////                            // TODO in case app crash when user click on save modifications button
-////                            event.value = CreationListEvent.OnExerciseNameChanged(adapterParentPosition, adapterPosition, "New Exercise")
-////                            }
-//                    }
-//                }
+                editTextTimerItemExerciseCreation.doAfterTextChanged { editableTimer ->
 
-//                binding.editTextTimerItemExerciseCreation.doAfterTextChanged { exerciseTimerEditable ->
-//                    val position = adapterPosition
-//                    val dateFormat: SimpleDateFormat = SimpleDateFormat("mm:ss")
-//                    dateFormat.timeZone = TimeZone.getTimeZone("GMT")
-//                    if (position != RecyclerView.NO_POSITION) {
-//                        val exercise = getItem(position)
-//                        if (exerciseTimerEditable != null) {
-//                            if (exerciseTimerEditable.isNotEmpty()) {
-//                                val editableToTime = dateFormat.parse(exerciseTimerEditable.toString())?.time
-//                                if (editableToTime != exercise.timer) {
-//                                    Log.d(
-//                                        "CreateSessionChild",
-//                                        "doAfterTextChanged: editableToTime != exercise.timer . exercise.timer : ${exercise.timer.toString()}"
-//                                    )
-//                                    event.value = CreationListEvent.OnExerciseTimerChanged(
-//                                        adapterParentPosition,
-//                                        position,
-//                                        UpdateTimeNumber.EDIT,
-//                                        editableToTime!!
-//
-//                                    )
-//                                    Log.d(
-//                                        "CreateSessionChild",
-//                                        "doAfterTextChanged: editableToTime != exercise.timer . editableToTime : ${editableToTime}"
-//                                    )
-//                                }
-//                            }
+                    // get format to parse the input string to a validate time
+                    val dateFormat = SimpleDateFormat("mm:ss")
+                    dateFormat.timeZone = TimeZone.getTimeZone("GMT")
+
+                    fun sendEventToViewModel(adapterParentPosition : Int, adapterPosition: Int, timer: Long): MutableLiveData<CreationListEvent> {
+                        event.value = CreationListEvent.OnExerciseTimerChanged(
+                            adapterParentPosition,
+                            adapterPosition,
+                            UpdateTimeNumber.EDIT,
+                            timer
+                        )
+                        return event
+                    }
+
+                    if (adapterPosition != RecyclerView.NO_POSITION) {
+
+                        // the lambda must be sure it won't get empty editableTimer
+                        if (editableTimer?.length!! > 0) {
+
+                            // give colon back to user if he deleted it and enter a number
+                            if (editableTimer.filter { !it.isDigit() }.toString() != ":" && editableTimer.none { !it.isDigit() }) {
+                                if (editableTimer.filter { it.isDigit() }.length <= 1) {
+                                    editableTimer.insert(1,":")
+                                }
+                                else if (editableTimer.filter { it.isDigit() }.length >= 2) {
+                                    editableTimer.insert(2,":")
+                                }
+                            }
+
+                            // when user input larger number than editText required
+                             if (editableTimer.filter { it.isDigit() }.length > 4 && editableTimer.none { !it.isDigit() }) {
+
+                                 val minutesInMilli: Long =
+                                     editableTimer.filter { it.isDigit() }.substring(0..1)
+                                         .toLong().times(60000)
+                                 val secondsInMilli: Long =
+                                     editableTimer.filter { it.isDigit() }.substring(2..3)
+                                         .toLong().times(1000)
+                                 val timer = minutesInMilli + secondsInMilli
+
+                                 if (editableTimer.isNotEmpty() && editableTimer.toString() != getItem(
+                                         adapterPosition
+                                     ).timer.toString()
+                                 ) {
+
+                                     sendEventToViewModel(adapterParentPosition, adapterPosition, timer)
+                                 }
+                             }
+
+                            // when user click enter
+                             editTextTimerItemExerciseCreation.setOnKeyListener { _, keyCode, keyEvent ->
+                                 var enterKeyClicked = false
+
+                                 if (keyEvent.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+                                     enterKeyClicked = true
+
+                                     // when user click enter with input number required
+                                     if ((editableTimer.filter { it.isDigit() }.length == 4 && editableTimer.filter { !it.isDigit() }.length == 1 && editableTimer.filter { !it.isDigit() }
+                                             .toString() == ":" ) ||
+                                         (editableTimer.filter { it.isDigit() }.length == 4 && editableTimer.none { !it.isDigit() })
+                                     ) {
+
+                                         if ((editableTimer.filter { it.isDigit() }.length == 4 && editableTimer.none { !it.isDigit() })) {
+                                             editableTimer.insert(2, ":")
+
+                                         }
+
+                                         val timer =
+                                             dateFormat.parse(editableTimer.toString())?.time!!
+
+                                         Log.d("TextWatcher", ":length = 4 parse it")
+
+                                         if (editableTimer.isNotEmpty() && editableTimer.toString() != getItem(
+                                                 adapterPosition
+                                             ).timer.toString()
+                                         ) {
+
+                                             sendEventToViewModel(adapterParentPosition, adapterPosition, timer)
+                                             closeKeyBoard(this.editTextTimerItemExerciseCreation)
+                                         }
+                                     }
+
+                                     // When user click enter but numbers are missing
+                                     if (editableTimer.filter { it.isDigit() }.length < 4 && editableTimer.filter { !it.isDigit() }.length == 1 && editableTimer.filter { !it.isDigit() }
+                                             .toString() == ":") {
+
+                                                 // avoiding a parsing error when user hit enter without number on a colon side and add 0
+                                         if (editableTimer.toString().first().toString() == ":") {
+                                             editableTimer.insert(0, "0")
+                                         }
+
+                                         if (editableTimer.toString().last().toString() == ":") {
+                                             editableTimer.append("0")
+                                         }
+
+
+                                         val timer = dateFormat.parse(editableTimer.toString())?.time!!
+
+                                         sendEventToViewModel(adapterParentPosition, adapterPosition, timer)
+                                         closeKeyBoard(this.editTextTimerItemExerciseCreation)
+
+                                     }
+                                 }
+                                 enterKeyClicked
+                             }
+                        }
+                    }
+                }
 //                        }
-//                    }
-////                        }
-////                else {
-//                    // TODO in case app crash when user click on save modifications button
-////                    event.value = CreationListEvent.OnStepTimerChanged(viewHolder.adapterPosition, CreationListEvent.UpdateTimeNumber.EDIT, 1)
-////                }
+//                else {
+                // TODO in case app crash when user click on save modifications button
+//                    event.value = CreationListEvent.OnStepTimerChanged(viewHolder.adapterPosition, CreationListEvent.UpdateTimeNumber.EDIT, 1)
 //                }
 
 
@@ -199,23 +261,19 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
         }
 
         fun bind(exercise: Exercise) {
+
             binding.apply {
 
-                var timerFormatted: String = SimpleDateFormat("mm:ss").format(exercise.timer)
-
                 editTextCreationExerciseName.setText(exercise.name)
-                Log.d("CreateSessionChild", "bind editTextName: ${exercise.name}")
-
-                editTextTimerItemExerciseCreation.setText(timerFormatted)
+                editTextTimerItemExerciseCreation.setText(exercise.timerFormatted)
             }
         }
     }
 
+    // listen child clicks and require the (parent) position to the parentAdapter
     interface CustomClickListener {
         fun onItemClick(): Int
     }
-
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CreateSessionChildViewHolder {
         val binding = ItemCreationExerciseBinding.inflate(LayoutInflater.from(parent.context), parent, false)

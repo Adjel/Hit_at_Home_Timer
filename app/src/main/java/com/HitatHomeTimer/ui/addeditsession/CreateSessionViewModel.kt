@@ -21,7 +21,7 @@ class CreateSessionViewModel(
     private val newSessionWithStepsAndExercises = createNewSession()
 
     private val stateHandleSession =
-        stateHandle.getLiveData<SessionWithStepsAndExercises>("addedditsession", newSessionWithStepsAndExercises.value)
+        stateHandle.getLiveData<SessionWithStepsAndExercises>("addedditsession")
 
     val sessionWithStepsAndExercises = stateHandle.getLiveData<SessionWithStepsAndExercises>("update", stateHandleSession.value ?: newSessionWithStepsAndExercises.value)
 
@@ -32,7 +32,10 @@ class CreateSessionViewModel(
         }
 
 
-    private fun onCreateNewExercise(adapterPosition: Int, stepWithExercises: StepWithExercises) = viewModelScope.launch {
+
+
+
+    private fun onCreateNewExercise(adapterPosition: Int) = viewModelScope.launch {
 
         mutableSessionWithStepsAndExercises.value?.stepList?.get(adapterPosition)?.exerciseLists =
             mutableSessionWithStepsAndExercises.value?.stepList.orEmpty()[adapterPosition].exerciseLists.orEmpty().plusElement(
@@ -41,13 +44,6 @@ class CreateSessionViewModel(
 
         sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
     }
-
-    //    var sessionWithStepsAndExercises: LiveData<SessionWithStepsAndExercises>? =
-//        stateHandleSession.value?.session?.sessionId?.let {
-//            repository.getSessionWithStepsAndExercisesById(
-//                it
-//            ).asLiveData()
-//        }
 
     fun insertSessionWithStepsAndExercises(sessionWithStepsAndExercises: SessionWithStepsAndExercises) =
         viewModelScope.launch {
@@ -122,7 +118,13 @@ class CreateSessionViewModel(
 
     private fun onDuplicateExercise(parentPosition: Int, exercise: Exercise) = viewModelScope.launch {
 
+        // get a copy of exercise (because liveData keep tracking first values and modifies it when base value is modified)
+        val duplicateExercise: Exercise = exercise.copy()
 
+        mutableSessionWithStepsAndExercises.value?.copy()?.stepList?.get(parentPosition)?.exerciseLists =
+            mutableSessionWithStepsAndExercises.value?.copy()?.stepList?.get(parentPosition)?.exerciseLists?.plus(duplicateExercise)!!
+
+        sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
     }
 
 
@@ -142,17 +144,8 @@ class CreateSessionViewModel(
         when (updateTime) {
 
             UpdateTimeNumber.INCREMENT -> {
-                Log.d(
-                    "CreateSessionChild",
-                    "in ViewModel : onUpdateExerciseTimer: parentPosition:  $parentPosition, adapterPosition : $adapterPosition"
-                )
 
                 mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists[adapterPosition].timer += 1000L
-
-                Log.d(
-                    "CreateSessionChild",
-                    "in ViewModel : onUpdateExerciseTimer Values: parentPosition:  $parentPosition, timer : ${mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists[adapterPosition].timer}"
-                )
 
                 sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
             }
@@ -165,6 +158,7 @@ class CreateSessionViewModel(
                 }
             }
             UpdateTimeNumber.EDIT -> {
+                Log.d("TextWatcher", "onUpdateExerciseName timer = $timer")
 
                 mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists[adapterPosition].timer =
                         timer
@@ -181,25 +175,6 @@ class CreateSessionViewModel(
 
         sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
     }
-
-
-//    val stepWithExercises = sessionWithStepsAndExercises.value?.stepList
-//
-//
-//
-//    var sessionName = stateHandle.get<String>("sessionName") ?: sessionWithStepsAndExercises.value?.session?.name ?: "Workout"
-//        set(value) {
-//            field = value
-//            stateHandle.set("sessionName", value)
-//        }
-//
-//    var position = 0
-//
-//    var stepTimesNumber = stateHandle.get<Long>("stepTimesNumber") ?: sessionWithStepsAndExercises.value?.stepList?.get(position)?.step?.timesNumber
-//        set(value) {
-//            field = value
-//            stateHandle.set("stepTimesNumber", value)
-//        }
 
 
 //    fun onStepButtonDeleteClicked(step: Step) = viewModelScope.launch { repository.deleteStep(step) }
@@ -227,9 +202,8 @@ class CreateSessionViewModel(
             is CreationListEvent.OnStepTimerChanged -> onUpdateStepTimer(event.adapterPosition, event.updateTime, event.timer)
             is CreationListEvent.OnDeleteStepClick -> onDeleteStep(event.adapterPosition)
 
-
             // Exercises clicks events
-            is CreationListEvent.OnNewExerciseClicked -> onCreateNewExercise(event.adapterPosition, event.stepWithExercises)
+            is CreationListEvent.OnNewExerciseClicked -> onCreateNewExercise(event.adapterPosition)
             is CreationListEvent.OnDuplicateExerciseClicked -> onDuplicateExercise(event.parentPosition, event.exercise)
             is CreationListEvent.OnExerciseTimerChanged -> onUpdateExerciseTimer(event.parentPosition ,event.adapterPosition, event.updateTime, event.timer)
             is CreationListEvent.OnExerciseNameChanged -> onUpdateExerciseName(event.parentPosition ,event.adapterPosition, event.newName)
@@ -246,7 +220,7 @@ sealed class CreationListEvent {
     data class OnStepTimerChanged(val adapterPosition: Int, val updateTime: UpdateTimeNumber, val timer: Long = 0L) : CreationListEvent()
     data class OnDuplicateStepClicked(val stepWithExercises: StepWithExercises) : CreationListEvent()
     object OnNewStepClicked : CreationListEvent()
-    data class OnNewExerciseClicked(val adapterPosition: Int, val stepWithExercises: StepWithExercises) : CreationListEvent()
+    data class OnNewExerciseClicked(val adapterPosition: Int) : CreationListEvent()
     data class OnDeleteStepClick(val adapterPosition: Int) : CreationListEvent()
 
 
