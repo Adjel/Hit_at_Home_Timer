@@ -51,7 +51,7 @@ class NavHostFragment : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_button_practice_fragment -> {
-                    navController.navigate(R.id.practiceFragment)
+                    navController.navigate(R.id.practiceFragment, null)
                     setBottomNavigationViewsCheckable(bottomNavigationView, true)
                     setFloatingActionButtonColor(addSessionFloatingActionButton, R.color.blue_yonder)
                     true

@@ -35,16 +35,16 @@ class PracticeViewModel(
     val allSessionWithStepsAndExercises: LiveData<List<SessionWithStepsAndExercises>> =
         repository.allSessionWithStepsAndExercises.asLiveData()
 
+//
+//    private fun getSession(): SessionWithStepsAndExercises {
+//        var last: SessionWithStepsAndExercises? = null
+//        last = allSessionWithStepsAndExercises.value?.last()
+//        return last!!
+//    }
 
-    private fun getSession(): SessionWithStepsAndExercises {
-        var last: SessionWithStepsAndExercises? = null
-        last = allSessionWithStepsAndExercises.value?.last()
-        return last!!
-    }
+    private val sessionWithStepsAndExercisesFromStateHandle = stateHandle.getLiveData<SessionWithStepsAndExercises>("sessionToPractice", lastSessionWithStepsAndExercises.asLiveData().value)
 
-    private val sessionWithStepsAndExercisesFromStateHandle = stateHandle.get<SessionWithStepsAndExercises>("sessionToPractice") ?: getSession()
-
-    val sessionWithStepsAndExercises = stateHandle.get<SessionWithStepsAndExercises>("currentStep") ?: sessionWithStepsAndExercisesFromStateHandle
+    val sessionWithStepsAndExercises = stateHandle.getLiveData<SessionWithStepsAndExercises>("currentStep", sessionWithStepsAndExercisesFromStateHandle.value)
 //        val sessionWithStepsAndExercises : MutableLiveData<SessionWithStepsAndExercises> = stateHandle.getLiveData("currentStep",
 
 //    /**
@@ -60,7 +60,6 @@ class PracticeViewModel(
     }
 
 }
-
 
 @Suppress("UNCHECKED_CAST")
 class PracticeViewModelFactory(
