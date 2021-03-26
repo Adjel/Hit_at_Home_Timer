@@ -19,8 +19,10 @@ class SessionRepository(private val sessionDao: SessionDao) {
     val allSessionWithStepsAndExercises: Flow<List<SessionWithStepsAndExercises>> =
         sessionDao.getAllSessionWithStepsAndExercises()
 
-    val lastSessionWithStepsAndExercises: Flow<SessionWithStepsAndExercises> =
-        sessionDao.lastSessionWithStepsAndExercises()
+    suspend fun lastSessionWithStepsAndExercises(): SessionWithStepsAndExercises =
+        coroutineScope {
+            sessionDao.lastSessionWithStepsAndExercises()
+        }
 
     fun getSessionWithStepsAndExercisesById(sessionOwnerId: Long): Flow<SessionWithStepsAndExercises> =
         sessionDao.getSessionWithStepsAndExercisesById(sessionOwnerId)

@@ -3,48 +3,33 @@ package com.HitatHomeTimer.ui.practice
 import android.os.Bundle
 import androidx.lifecycle.*
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavArgs
 import androidx.savedstate.SavedStateRegistryOwner
 import com.HitatHomeTimer.repository.SessionRepository
-import com.HitatHomeTimer.repository.localdata.entities.Exercise
 import com.HitatHomeTimer.repository.localdata.entities.Session
-import com.HitatHomeTimer.repository.localdata.entities.Step
 import com.HitatHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises
-import com.HitatHomeTimer.repository.localdata.relations.StepWithExercises
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.lang.IllegalArgumentException
 
 
 class PracticeViewModel(
     private val repository: SessionRepository,
-    stateHandle: SavedStateHandle
+    private val stateHandle: SavedStateHandle
 ) : ViewModel() {
 
     // Using LiveData and caching what allSteps returns has several benefits:
     // - We can put an observer on the data (instead of polling for changes) and only update the
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
+    private fun lastSessionWithStepsAndExercises(): SessionWithStepsAndExercises = runBlocking {
+       repository.lastSessionWithStepsAndExercises()
+    }
 
-    private val lastSessionWithStepsAndExercises: Flow<SessionWithStepsAndExercises> =
-        repository.lastSessionWithStepsAndExercises
+    private val sessionWithStepsAndExercisesFromStateHandle = stateHandle.get<SessionWithStepsAndExercises>("sessionToPractice") ?: lastSessionWithStepsAndExercises().copy()
 
-    val allSessionWithStepsAndExercises: LiveData<List<SessionWithStepsAndExercises>> =
-        repository.allSessionWithStepsAndExercises.asLiveData()
-
-//
-//    private fun getSession(): SessionWithStepsAndExercises {
-//        var last: SessionWithStepsAndExercises? = null
-//        last = allSessionWithStepsAndExercises.value?.last()
-//        return last!!
-//    }
-
-    private val sessionWithStepsAndExercisesFromStateHandle = stateHandle.getLiveData<SessionWithStepsAndExercises>("sessionToPractice", lastSessionWithStepsAndExercises.asLiveData().value)
-
-    val sessionWithStepsAndExercises = stateHandle.getLiveData<SessionWithStepsAndExercises>("currentStep", sessionWithStepsAndExercisesFromStateHandle.value)
+    val sessionWithStepsAndExercises = stateHandle.get<SessionWithStepsAndExercises>("currentStep") ?: sessionWithStepsAndExercisesFromStateHandle
 //        val sessionWithStepsAndExercises : MutableLiveData<SessionWithStepsAndExercises> = stateHandle.getLiveData("currentStep",
 
 //    /**

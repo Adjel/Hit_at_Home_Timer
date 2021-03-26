@@ -67,8 +67,6 @@ class SessionViewModel(
 }
 
 
-
-
 @Suppress("UNCHECKED_CAST")
 class SessionViewModelFactory(
     private val repository: SessionRepository,

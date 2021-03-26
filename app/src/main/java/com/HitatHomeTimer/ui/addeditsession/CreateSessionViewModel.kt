@@ -31,7 +31,6 @@ class CreateSessionViewModel(
             stateHandle.set("update", value)
         }
 
-
     // edit SessionWithStepsAndExercises functions and read events
 
     private fun onCreateNewExercise(adapterPosition: Int) = viewModelScope.launch {
