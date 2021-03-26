@@ -45,12 +45,12 @@ class SessionFragment : Fragment(R.layout.fragment_workout_session),
 
 
         bottomNavigationView =
-            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+            requireActivity().findViewById(R.id.bottom_navigation_view)
 
         navController = view.findNavController()
 
         floatingActionButton =
-            requireActivity().findViewById<FloatingActionButton>(R.id.floating_action_button_add_session)
+            requireActivity().findViewById(R.id.floating_action_button_add_session)
 
 
         binding.apply {

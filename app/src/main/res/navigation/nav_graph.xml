@@ -27,7 +27,7 @@
         android:label="fragment_practice"
         tools:layout="@layout/fragment_practice" >
         <argument
-            android:name="sessionWith"
+            android:name="sessionToPractice"
             app:argType="com.HitatHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises"
             app:nullable="true"
             android:defaultValue="@null" />

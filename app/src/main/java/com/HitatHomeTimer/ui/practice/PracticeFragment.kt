@@ -14,15 +14,15 @@ import com.hitathometimer.databinding.FragmentPracticeBinding
 class PracticeFragment : Fragment(R.layout.fragment_practice) {
 
     private val practiceParentListAdapter = PracticeParentListAdapter()
+    private val args: PracticeFragmentArgs by navArgs()
 
-    private val practiceViewModel: PracticeViewModel by viewModels{
+    private val practiceViewModel: PracticeViewModel by viewModels {
         PracticeViewModelFactory(
             ((requireActivity().application as SessionApplication).repository),
-            args.sessionWith
+            this,
+            args.toBundle()
         )
     }
-
-    private val args: PracticeFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -31,6 +31,15 @@ class PracticeFragment : Fragment(R.layout.fragment_practice) {
 
 
         binding.apply {
+            practiceViewModel.sessionWithStepsAndExercises.observe(viewLifecycleOwner) {
+                textViewPracticeSessionName.text = it.session.name
+            }
+
+//            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+//                textViewPracticeSessionName.text = practiceViewModel.sessionWithStepsAndExercises?.session?.name
+//            }
+
+
             recyclerViewPracticeSession.apply {
                 adapter = practiceParentListAdapter
                 layoutManager = LinearLayoutManager(requireContext())
@@ -38,10 +47,14 @@ class PracticeFragment : Fragment(R.layout.fragment_practice) {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            practiceParentListAdapter.submitList(practiceViewModel.arguments?.stepList)
-            binding.textViewPracticeSessionName.text = practiceViewModel.arguments?.session?.name
+        practiceViewModel.sessionWithStepsAndExercises.observe(viewLifecycleOwner) {
+            practiceParentListAdapter.submitList(it.stepList)
         }
 
+//        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+//            practiceParentListAdapter.submitList(
+//                practiceViewModel.sessionWithStepsAndExercises?.stepList
+//            )
+//        }
     }
 }

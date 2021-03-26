@@ -42,7 +42,6 @@ class SessionViewModel(
     val allSessionWithStepsAndExercises: LiveData<List<SessionWithStepsAndExercises>> =
         repository.allSessionWithStepsAndExercises.asLiveData()
 
-
     fun onDeleteSessionClicked(session: Session) = viewModelScope.launch {
         repository.deleteSession(session)
     }

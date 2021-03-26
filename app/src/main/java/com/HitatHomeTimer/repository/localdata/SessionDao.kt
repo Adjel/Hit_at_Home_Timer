@@ -10,6 +10,7 @@ import com.HitatHomeTimer.repository.localdata.relations.SessionWithSteps
 import com.HitatHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises
 import com.HitatHomeTimer.repository.localdata.relations.StepWithExercises
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Dao
 interface SessionDao {
@@ -85,9 +86,10 @@ interface SessionDao {
     @Query("SELECT * FROM step_table")
     fun getStepsWithExercises(): Flow<List<StepWithExercises>>
 
+
     @Transaction
-    @Query("SELECT * FROM step_table WHERE stepId = :stepId")
-    fun getFirstStepWithExercises(stepId: Long): Flow<List<StepWithExercises>>
+    @Query("SELECT * FROM session_table ORDER BY dateCreated DESC LIMIT 1")
+    fun lastSessionWithStepsAndExercises(): Flow<List<SessionWithStepsAndExercises>>
 
 
     @Transaction
