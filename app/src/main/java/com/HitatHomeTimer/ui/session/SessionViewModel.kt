@@ -75,12 +75,12 @@ class SessionViewModelFactory(
     owner: SavedStateRegistryOwner,
     defaultArgs: Bundle? = null
 ) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
-    override fun <T : ViewModel> create(key: String, modelClass: Class<T>, handle: SavedStateHandle
+    override fun <T : ViewModel> create(
+        key: String, modelClass: Class<T>, handle: SavedStateHandle
     ): T {
         if (modelClass.isAssignableFrom(SessionViewModel::class.java)) {
             return SessionViewModel(repository, handle) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
-
 }

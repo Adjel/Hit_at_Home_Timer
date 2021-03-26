@@ -19,7 +19,7 @@ class SessionRepository(private val sessionDao: SessionDao) {
     val allSessionWithStepsAndExercises: Flow<List<SessionWithStepsAndExercises>> =
         sessionDao.getAllSessionWithStepsAndExercises()
 
-    val lastSessionWithStepsAndExercises: Flow<List<SessionWithStepsAndExercises>> =
+    val lastSessionWithStepsAndExercises: Flow<SessionWithStepsAndExercises> =
         sessionDao.lastSessionWithStepsAndExercises()
 
     fun getSessionWithStepsAndExercisesById(sessionOwnerId: Long): Flow<SessionWithStepsAndExercises> =

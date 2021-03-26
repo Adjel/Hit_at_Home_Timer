@@ -8,6 +8,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.HitatHomeTimer.di.SessionApplication
+import com.HitatHomeTimer.repository.localdata.SessionDao
+import com.HitatHomeTimer.repository.localdata.SessionDatabase
 import com.hitathometimer.R
 import com.hitathometimer.databinding.FragmentPracticeBinding
 
@@ -29,16 +31,14 @@ class PracticeFragment : Fragment(R.layout.fragment_practice) {
 
         val binding = FragmentPracticeBinding.bind(view)
 
-
         binding.apply {
-            practiceViewModel.sessionWithStepsAndExercises.observe(viewLifecycleOwner) {
-                textViewPracticeSessionName.text = it.session.name
-            }
-
-//            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-//                textViewPracticeSessionName.text = practiceViewModel.sessionWithStepsAndExercises?.session?.name
+//            practiceViewModel.sessionWithStepsAndExercises.observe(viewLifecycleOwner) {
+//                textViewPracticeSessionName.text = it.session.name
 //            }
 
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                textViewPracticeSessionName.text = practiceViewModel.sessionWithStepsAndExercises?.session?.name
+            }
 
             recyclerViewPracticeSession.apply {
                 adapter = practiceParentListAdapter
@@ -47,14 +47,14 @@ class PracticeFragment : Fragment(R.layout.fragment_practice) {
             }
         }
 
-        practiceViewModel.sessionWithStepsAndExercises.observe(viewLifecycleOwner) {
-            practiceParentListAdapter.submitList(it.stepList)
-        }
-
-//        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-//            practiceParentListAdapter.submitList(
-//                practiceViewModel.sessionWithStepsAndExercises?.stepList
-//            )
+//        practiceViewModel.sessionWithStepsAndExercises.observe(viewLifecycleOwner) {
+//            practiceParentListAdapter.submitList(it.stepList)
 //        }
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            practiceParentListAdapter.submitList(
+                practiceViewModel.sessionWithStepsAndExercises?.stepList
+            )
+        }
     }
 }
