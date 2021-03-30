@@ -8,32 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.HitatHomeTimer.repository.localdata.entities.Exercise
 import com.hitathometimer.databinding.ItemPracticeExerciseBinding
 
-//class PracticeChildAdapter(
-//    val exerciseList: List<Exercise>
-//    ): RecyclerView.Adapter<PracticeParentListAdapter.PracticeParentViewHolder>() {
-//
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PracticeParentListAdapter.PracticeParentViewHolder {
-//        TODO("Not yet implemented")
-//    }
-//
-//    override fun onBindViewHolder(holder: PracticeParentListAdapter.PracticeParentViewHolder, position: Int) {
-//        holder.bind()
-//    }
-//
-//    override fun getItemCount(): Int {
-//        return exerciseList.size
-//    }
-//
-//    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-//        val myView = view.rootView
-//    }
-//
-//
-//}
-
-
-
-
 class PracticeChildAdapter :
     ListAdapter<Exercise, PracticeChildAdapter.PracticeChildViewHolder>(
         PracticeChildListItemDiffCallback()

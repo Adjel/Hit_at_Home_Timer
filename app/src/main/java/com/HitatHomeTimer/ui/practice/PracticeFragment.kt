@@ -1,6 +1,7 @@
 package com.HitatHomeTimer.ui.practice
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,6 +13,7 @@ import com.HitatHomeTimer.repository.localdata.SessionDao
 import com.HitatHomeTimer.repository.localdata.SessionDatabase
 import com.hitathometimer.R
 import com.hitathometimer.databinding.FragmentPracticeBinding
+import kotlin.time.ExperimentalTime
 
 class PracticeFragment : Fragment(R.layout.fragment_practice) {
 
@@ -37,13 +39,31 @@ class PracticeFragment : Fragment(R.layout.fragment_practice) {
 //            }
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                textViewPracticeSessionName.text = practiceViewModel.sessionWithStepsAndExercises?.session?.name
+                textViewPracticeSessionName.text = practiceViewModel.sessionWithStepsAndExercises.session.name
             }
 
             recyclerViewPracticeSession.apply {
                 adapter = practiceParentListAdapter
                 layoutManager = LinearLayoutManager(requireContext())
                 setHasFixedSize(true)
+            }
+
+            buttonPracticeStartSession.setOnClickListener {
+                practiceViewModel.startCountdownClicked()
+            }
+
+
+
+//            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+//
+//                Log.d("PracticeViewModel", "onViewCreated: ${practiceViewModel.textCountDown}")
+//                textViewPracticeCountdown.text = ""
+//                textViewPracticeCountdown.append(practiceViewModel._TextCountDown)
+//            }
+
+            practiceViewModel.textCountDown.observe(viewLifecycleOwner) {
+//                Log.d("PracticeViewModel", "onViewCreated: ${it}")
+                textViewPracticeCountdown.text = it
             }
         }
 
@@ -53,7 +73,7 @@ class PracticeFragment : Fragment(R.layout.fragment_practice) {
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             practiceParentListAdapter.submitList(
-                practiceViewModel.sessionWithStepsAndExercises?.stepList
+                practiceViewModel.sessionWithStepsAndExercises.stepList
             )
         }
     }

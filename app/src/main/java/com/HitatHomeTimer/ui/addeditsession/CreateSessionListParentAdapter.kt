@@ -89,7 +89,7 @@ class CreateSessionListParentAdapter(val fragment: CreateSessionFragment, val ev
                         // input is send only if value changed and is not empty
                         if (editable != null && editable.toString() != stepWithExercises.step.timesNumber.toString()) {
                             if (editable.isNotEmpty()) {
-                                event.value = CreationListEvent.OnStepTimerChanged(adapterPosition, UpdateTimeNumber.EDIT, editable.toString().toLong()
+                                event.value = CreationListEvent.OnStepTimerChanged(adapterPosition, UpdateTimeNumber.EDIT, editable.toString().toInt()
                                 )
                             }
                         }

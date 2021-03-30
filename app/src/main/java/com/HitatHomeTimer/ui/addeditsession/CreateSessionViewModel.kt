@@ -42,7 +42,7 @@ class CreateSessionViewModel(
         sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
     }
 
-    private fun onUpdateStepTimer(adapterPosition: Int, updateTime: UpdateTimeNumber, timer: Long) = viewModelScope.launch  {
+    private fun onUpdateStepTimer(adapterPosition: Int, updateTime: UpdateTimeNumber, times: Int) = viewModelScope.launch  {
         when (updateTime) {
 
             UpdateTimeNumber.INCREMENT -> {
@@ -61,7 +61,7 @@ class CreateSessionViewModel(
 
             UpdateTimeNumber.EDIT -> {
                     mutableSessionWithStepsAndExercises.value!!.stepList[adapterPosition].step.timesNumber =
-                        timer
+                        times
                 sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
             }
         }
@@ -157,7 +157,7 @@ class CreateSessionViewModel(
             // Steps clicks events
             is CreationListEvent.OnNewStepClicked -> onCreateNewStep()
             is CreationListEvent.OnDuplicateStepClicked -> onDuplicateStep(event.stepWithExercises)
-            is CreationListEvent.OnStepTimerChanged -> onUpdateStepTimer(event.adapterPosition, event.updateTime, event.timer)
+            is CreationListEvent.OnStepTimerChanged -> onUpdateStepTimer(event.adapterPosition, event.updateTime, event.times)
             is CreationListEvent.OnDeleteStepClick -> onDeleteStep(event.adapterPosition)
 
             // Exercises clicks events
@@ -191,7 +191,7 @@ enum class UpdateTimeNumber { INCREMENT , DECREMENT, EDIT }
 sealed class CreationListEvent {
 
     // Edit Steps
-    data class OnStepTimerChanged(val adapterPosition: Int, val updateTime: UpdateTimeNumber, val timer: Long = 0L) : CreationListEvent()
+    data class OnStepTimerChanged(val adapterPosition: Int, val updateTime: UpdateTimeNumber, val times: Int = 0) : CreationListEvent()
     data class OnDuplicateStepClicked(val stepWithExercises: StepWithExercises) : CreationListEvent()
     object OnNewStepClicked : CreationListEvent()
     data class OnNewExerciseClicked(val adapterPosition: Int) : CreationListEvent()

@@ -45,7 +45,7 @@ class PracticeParentListAdapter :
                 recyclerViewPracticeSessionExercise.apply {
                     adapter = exerciseListAdapter
                     layoutManager = childLayoutManager
-                    setRecycledViewPool(viewPool)
+
                 }
             }
 

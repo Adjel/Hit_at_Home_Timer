@@ -22,7 +22,7 @@ import kotlinx.parcelize.Parcelize
 data class Step(
     val sessionOwnerId: Long = 0L,
     var position: Long = 0L,
-    var timesNumber: Long = 1L,
+    var timesNumber: Int = 1,
     @PrimaryKey(autoGenerate = true)
     val stepId: Long = 0L
 ) : Parcelable
