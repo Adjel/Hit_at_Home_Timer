@@ -1,7 +1,11 @@
 package com.HitatHomeTimer.ui.practice
 
+import android.annotation.SuppressLint
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.get
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -9,14 +13,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.HitatHomeTimer.repository.localdata.entities.Exercise
 import com.HitatHomeTimer.repository.localdata.entities.Step
 import com.HitatHomeTimer.repository.localdata.relations.StepWithExercises
+import com.hitathometimer.R
 import com.hitathometimer.databinding.ItemPracticeStepBinding
 
-class PracticeParentListAdapter :
+class PracticeParentListAdapter(val fragment: PracticeFragment) :
     ListAdapter<StepWithExercises, PracticeParentListAdapter.PracticeParentViewHolder>(
         PracticeParentListItemDiffCallback()
     ) {
-
-    private val viewPool = RecyclerView.RecycledViewPool()
 
     inner class PracticeParentViewHolder(private val binding: ItemPracticeStepBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -32,11 +35,11 @@ class PracticeParentListAdapter :
             }
         }
 
-
         fun bind(stepWithExercises: StepWithExercises) {
 
-            val childLayoutManager = LinearLayoutManager(binding.recyclerViewPracticeSessionExercise.context)
-            val exerciseListAdapter = PracticeChildAdapter()
+            val childLayoutManager =
+                LinearLayoutManager(binding.recyclerViewPracticeSessionExercise.context)
+            val exerciseListAdapter = PracticeChildAdapter(fragment)
             exerciseListAdapter.submitList(stepWithExercises.exerciseLists)
 
             binding.apply {
@@ -45,14 +48,18 @@ class PracticeParentListAdapter :
                 recyclerViewPracticeSessionExercise.apply {
                     adapter = exerciseListAdapter
                     layoutManager = childLayoutManager
+                }
 
+                fragment.currentStepTimer.observe(fragment.viewLifecycleOwner) {
+                    Log.d("practice", "bind in parent: value of currentExerciseTimer ${it}")
+
+                    if (getItem(adapterPosition).step.stepId == it.stepId) {
+//                        cardviewPracticeSession.requestFocus()
+                    }
                 }
             }
-
-
         }
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PracticeParentViewHolder {
         val binding = ItemPracticeStepBinding.inflate(LayoutInflater.from(parent.context), parent, false
@@ -74,3 +81,4 @@ class PracticeParentListItemDiffCallback : DiffUtil.ItemCallback<StepWithExercis
     override fun areContentsTheSame(oldItem: StepWithExercises, newItem: StepWithExercises) =
         oldItem == newItem
 }
+

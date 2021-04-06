@@ -17,8 +17,11 @@ class CreateSessionViewModel(
     private val repository: SessionRepository,
 ) : ViewModel() {
 
-    // get data from SavedStateHandle and set LiveData to be observed
+    /**
+     * @SavedStateHandle data retrieved and set LiveData to be observed
+     */
     private val newSessionWithStepsAndExercises = createNewSession()
+
 
     private val stateHandleSession =
         stateHandle.getLiveData<SessionWithStepsAndExercises>("addedditsession")
@@ -31,7 +34,9 @@ class CreateSessionViewModel(
             stateHandle.set("update", value)
         }
 
-    // edit SessionWithStepsAndExercises functions and read events
+    /**
+     * edit SessionWithStepsAndExercises functions and read events
+     */
 
     private fun onCreateNewExercise(adapterPosition: Int) = viewModelScope.launch {
         mutableSessionWithStepsAndExercises.value?.stepList?.get(adapterPosition)?.exerciseLists =
@@ -68,13 +73,17 @@ class CreateSessionViewModel(
     }
 
     private fun onDuplicateStep(stepWithExercises: StepWithExercises) = viewModelScope.launch {
-        // get a copy of step and exercises (because liveData keep tracking first values and modifies it when base value is modified)
+        /**
+         * get a copy of step and exercises (because liveData keep tracking first values and modifies it when base value is modified)
+         */
         val duplicateExercisesList = mutableListOf<Exercise>()
         (stepWithExercises.exerciseLists.forEach {
             duplicateExercisesList.add(it.copy())
         })
 
-        // duplicate the value in a new value and add it to the base steps list
+        /**
+         * duplicate the value in a new value and add it to the base steps list
+         */
         val duplicateStep = StepWithExercises(step = stepWithExercises.step.copy(), exerciseLists = duplicateExercisesList)
         mutableSessionWithStepsAndExercises.value?.stepList = mutableSessionWithStepsAndExercises.value!!.stepList.plusElement(duplicateStep)
 
@@ -97,7 +106,9 @@ class CreateSessionViewModel(
     }
 
     private fun onDuplicateExercise(parentPosition: Int, exercise: Exercise) = viewModelScope.launch {
-        // get a copy of exercise (because liveData keep tracking first values and modifies it when base value is modified)
+        /**
+         * get a copy of exercise (because liveData keep tracking first values and modifies it when base value is modified)
+         */
         val duplicateExercise: Exercise = exercise.copy()
 
         mutableSessionWithStepsAndExercises.value?.copy()?.stepList?.get(parentPosition)?.exerciseLists =
@@ -150,17 +161,24 @@ class CreateSessionViewModel(
         }
     }
 
-    // retrieve and decide which event and what it will trigger
+    /**
+     * retrieve an event, checks which type is and what it will trigger
+     */
     fun handleEvent(event: CreationListEvent) {
         when (event) {
 
-            // Steps clicks events
+            /**
+             *  Steps clicks events
+             */
+
             is CreationListEvent.OnNewStepClicked -> onCreateNewStep()
             is CreationListEvent.OnDuplicateStepClicked -> onDuplicateStep(event.stepWithExercises)
             is CreationListEvent.OnStepTimerChanged -> onUpdateStepTimer(event.adapterPosition, event.updateTime, event.times)
             is CreationListEvent.OnDeleteStepClick -> onDeleteStep(event.adapterPosition)
 
-            // Exercises clicks events
+            /**
+             * Exercises clicks events
+             */
             is CreationListEvent.OnNewExerciseClicked -> onCreateNewExercise(event.adapterPosition)
             is CreationListEvent.OnDuplicateExerciseClicked -> onDuplicateExercise(event.parentPosition, event.exercise)
             is CreationListEvent.OnExerciseTimerChanged -> onUpdateExerciseTimer(event.parentPosition ,event.adapterPosition, event.updateTime, event.timer)
@@ -169,6 +187,9 @@ class CreateSessionViewModel(
         }
     }
 
+    /**
+     * create a new base session if argument is null or not chosen
+     */
     private fun createNewSession() = MutableLiveData(
         SessionWithStepsAndExercises(
             Session("Workout"),
@@ -184,13 +205,19 @@ class CreateSessionViewModel(
 
 }
 
- // enum class to tell to event what type of event it is
+/**
+ * Edit events types
+ */
 enum class UpdateTimeNumber { INCREMENT , DECREMENT, EDIT }
 
-// declare events types
+/**
+ * event types which retrieve data from adapters and fragment
+ */
 sealed class CreationListEvent {
 
-    // Edit Steps
+    /**
+     *  edit steps
+     */
     data class OnStepTimerChanged(val adapterPosition: Int, val updateTime: UpdateTimeNumber, val times: Int = 0) : CreationListEvent()
     data class OnDuplicateStepClicked(val stepWithExercises: StepWithExercises) : CreationListEvent()
     object OnNewStepClicked : CreationListEvent()
@@ -198,7 +225,9 @@ sealed class CreationListEvent {
     data class OnDeleteStepClick(val adapterPosition: Int) : CreationListEvent()
 
 
-    // Edit exercises
+    /**
+     *  edit exercises
+     */
     data class OnExerciseTimerChanged(val parentPosition: Int, val adapterPosition: Int, val updateTime: UpdateTimeNumber, val timer: Long = 0L) : CreationListEvent()
     data class OnExerciseNameChanged(val parentPosition: Int, val adapterPosition: Int, val newName: String) : CreationListEvent()
     data class OnDuplicateExerciseClicked(val parentPosition: Int, val exercise: Exercise) : CreationListEvent()
@@ -206,7 +235,10 @@ sealed class CreationListEvent {
 }
 
 
-// ViewModel Factory to retrieve Fragment args in SavedStateHandle (bundle)
+
+/**
+ *  @ViewModelFactory to retrieve Fragment args in SavedStateHandle (bundle)
+ */
 @Suppress("UNCHECKED_CAST")
 class CreateSessionViewModelFactory(
     owner: SavedStateRegistryOwner,

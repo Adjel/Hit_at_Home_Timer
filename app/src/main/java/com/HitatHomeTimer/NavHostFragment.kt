@@ -1,5 +1,7 @@
 package com.HitatHomeTimer
 
+import android.annotation.SuppressLint
+import android.app.ActionBar
 import android.app.Application
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,6 +23,7 @@ class NavHostFragment : AppCompatActivity() {
         SESSION, CREATE, PRACTICE
     }
 
+    @SuppressLint("WrongConstant")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.nav_host_fragment)
@@ -28,6 +31,10 @@ class NavHostFragment : AppCompatActivity() {
         bottomNavigationView = findViewById(R.id.bottom_navigation_view)
         addSessionFloatingActionButton =
             findViewById(R.id.floating_action_button_add_session)
+
+        val actionBar = supportActionBar
+        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+        supportActionBar?.setCustomView(R.layout.action_bar)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -38,11 +45,13 @@ class NavHostFragment : AppCompatActivity() {
         // INVISIBLE ITEM IN BottomNavigationView SET TO ENABLED
         bottomNavigationView.menu.getItem(1).isEnabled = false
 
-
-
-        // NAVIGATION TRIGGERS
-
+        /**
+         *   NAVIGATION TRIGGERS
+         **/
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+
+            actionBar!!.title = item.title
+
             when (item.itemId) {
                 R.id.navigation_button_session_fragment -> {
                     navController.navigate(R.id.sessionFragment)
@@ -62,6 +71,9 @@ class NavHostFragment : AppCompatActivity() {
         }
 
         addSessionFloatingActionButton.setOnClickListener {
+
+            actionBar!!.title = "Add or edit a workout"
+
             navController.navigate(R.id.createSessionFragment)
             setFloatingActionButtonColor(addSessionFloatingActionButton, R.color.ivory)
             setBottomNavigationViewsCheckable(bottomNavigationView, false)
@@ -69,8 +81,9 @@ class NavHostFragment : AppCompatActivity() {
 
     }
 
-
-    // FUNCTIONS TO SET NAVIGATION ITEMS CHECKABLE AND COLORS
+    /**
+     * FUNCTIONS TO SET NAVIGATION ITEMS CHECKABLE AND COLORS
+     */
 
     private fun setBottomNavigationViewsCheckable(
         bottomNavigationView: BottomNavigationView,

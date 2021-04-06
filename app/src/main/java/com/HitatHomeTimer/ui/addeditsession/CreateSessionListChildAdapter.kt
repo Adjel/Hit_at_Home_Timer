@@ -26,7 +26,7 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
     inner class CreateSessionChildViewHolder(private val binding: ItemCreationExerciseBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-        // close keyboard on editText and set focus to null
+        /** close keyboard on editText and set focus to null */
         private fun closeKeyBoard(view: View) {
             view.clearFocus()
             val inputMethodManager  = view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -35,12 +35,12 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
 
         init {
 
-            // retrieve parent adapter's position
+            /** retrieve parent adapter's position */
             val adapterParentPosition = parentPosition.onItemClick()
 
             binding.apply {
 
-                // menu popup to delete or duplicate an exercise
+                /** menu popup to delete or duplicate an exercise */
                 imageButtonCreationExerciseMenu.setOnClickListener {
 
                     if (adapterPosition != RecyclerView.NO_POSITION) {
@@ -109,40 +109,49 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
 
                     if (adapterPosition != RecyclerView.NO_POSITION) {
 
-                        // input is send only if value changed and is not empty
-                        if (editableName != null && editableName.isNotEmpty() && editableName.toString() != getItem(
-                            adapterPosition
-                            ).name
-                        ) {
+                        if (editableName?.length!! > 0) {
 
-                            // when user hit enter
-                            editTextCreationExerciseName.setOnKeyListener { _, keyCode, keyEvent ->
+                            /** input is send only if value changed and is not empty */
+                            if (editableName.isNotEmpty() && editableName.toString() != getItem(
+                                    adapterPosition
+                                ).name
+                            ) {
 
-                                if (keyEvent.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+                                /** when user hit enter */
+                                editTextCreationExerciseName.setOnKeyListener { _, keyCode, keyEvent ->
 
-                                    sendEventToViewModel(adapterParentPosition, adapterPosition, editableName)
+                                    if (keyEvent.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+
+                                        sendEventToViewModel(
+                                            adapterParentPosition,
+                                            adapterPosition,
+                                            editableName
+                                        )
+                                    }
+                                    /** close the keyboard and tell to KeyListener that event is consumed */
+                                    closeKeyBoard(this.editTextCreationExerciseName)
+                                    true
                                 }
-                                // close the keyboard and tell to KeyListener that event is consumed
-                                closeKeyBoard(this.editTextCreationExerciseName)
-                                true
+
+                                /** get input when editText focus changed */
+                                editTextCreationExerciseName.setOnFocusChangeListener { _, hasFocus ->
+
+                                    if (!hasFocus) {
+                                        sendEventToViewModel(
+                                            adapterParentPosition,
+                                            adapterPosition,
+                                            editableName
+                                        )
+                                    }
+                                }
                             }
 
-                            // get input when editText focus changed
-                            editTextCreationExerciseName.setOnFocusChangeListener { _, hasFocus ->
-
-                                if (!hasFocus) {
-                                    sendEventToViewModel(adapterParentPosition, adapterPosition, editableName)
-                                }
-                            }
                         }
-
                     }
 
                 }
-
                 editTextTimerItemExerciseCreation.doAfterTextChanged { editableTimer ->
-
-                    // get format to parse the input string to a validate time
+                    /** get format to parse the input string to a validate time */
                     val dateFormat = SimpleDateFormat("mm:ss")
                     dateFormat.timeZone = TimeZone.getTimeZone("GMT")
 
@@ -157,11 +166,10 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                     }
 
                     if (adapterPosition != RecyclerView.NO_POSITION) {
-
-                        // the lambda must be sure it won't get empty editableTimer
+                        /** the lambda must be sure it won't get empty editableTimer */
                         if (editableTimer?.length!! > 0) {
 
-                            // give colon back to user if he deleted it and enter a number
+                            /** give colon back to user if he deleted it and enter a number */
                             if (editableTimer.filter { !it.isDigit() }.toString() != ":" && editableTimer.none { !it.isDigit() }) {
                                 if (editableTimer.filter { it.isDigit() }.length <= 1) {
                                     editableTimer.insert(1,":")
@@ -171,7 +179,7 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                                 }
                             }
 
-                            // when user input larger number than editText required
+                            /** when user input larger number than editText required */
                              if (editableTimer.filter { it.isDigit() }.length > 4 && editableTimer.none { !it.isDigit() }) {
 
                                  val minutesInMilli: Long =
@@ -191,14 +199,14 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                                  }
                              }
 
-                            // when user click enter
+                            /** when user click enter */
                              editTextTimerItemExerciseCreation.setOnKeyListener { _, keyCode, keyEvent ->
                                  var enterKeyClicked = false
 
                                  if (keyEvent.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
                                      enterKeyClicked = true
 
-                                     // when user click enter with input number required
+                                     /**  when user click enter with input number required */
                                      if ((editableTimer.filter { it.isDigit() }.length == 4 && editableTimer.filter { !it.isDigit() }.length == 1 && editableTimer.filter { !it.isDigit() }
                                              .toString() == ":") ||
                                          (editableTimer.filter { it.isDigit() }.length == 4 && editableTimer.none { !it.isDigit() })
@@ -228,11 +236,11 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                                          }
                                      }
 
-                                     // When user click enter but numbers are missing
+                                     /** When user click enter but numbers are missing */
                                      if (editableTimer.filter { it.isDigit() }.length < 4 && editableTimer.filter { !it.isDigit() }.length == 1 && editableTimer.filter { !it.isDigit() }
                                              .toString() == ":") {
 
-                                         // avoiding a parsing error when user hit enter without number on a colon side and add 0
+                                         /**  avoiding a parsing error when user hit enter without number on a colon side and add 0 */
                                          if (editableTimer.toString().first()
                                                  .toString() == ":"
                                          ) {
@@ -260,12 +268,12 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                                  enterKeyClicked
                              }
 
-                            // when user doesn't validate but click out
+                            /** when user doesn't validate but click out */
                             editTextTimerItemExerciseCreation.setOnFocusChangeListener { _, hasFocus ->
 
                                 if (!hasFocus) {
 
-                                    // when user click enter with input number required
+                                    /** when user click enter with input number required */
                                     if ((editableTimer.filter { it.isDigit() }.length == 4 && editableTimer.filter { !it.isDigit() }.length == 1 && editableTimer.filter { !it.isDigit() }
                                             .toString() == ":") ||
                                         (editableTimer.filter { it.isDigit() }.length == 4 && editableTimer.none { !it.isDigit() })
@@ -295,11 +303,11 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                                         }
                                     }
 
-                                    // When user click enter but numbers are missing
+                                    /** When user click enter but numbers are missing */
                                     if (editableTimer.filter { it.isDigit() }.length < 4 && editableTimer.filter { !it.isDigit() }.length == 1 && editableTimer.filter { !it.isDigit() }
                                             .toString() == ":") {
 
-                                        // avoiding a parsing error when user hit enter without number on a colon side and add 0
+                                        /** avoiding a parsing error when user hit enter without number on a colon side and add 0 */
                                         if (editableTimer.toString().first()
                                                 .toString() == ":"
                                         ) {
@@ -347,7 +355,7 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
         }
     }
 
-    // listen child clicks and require the (parent) position to the parentAdapter
+    /** listen child clicks and require the (parent) position to the parentAdapter */
     interface CustomClickListener {
         fun onItemClick(): Int
     }

@@ -17,7 +17,9 @@
     <string name="add_a_new_step">Add a new step</string>
     <string name="save_session_in_creation">SAVE</string>
     <string name="start_session_in_practice">start</string>
+    <string name="pause_session_in_practice">pause</string>
     <string name="reset_session_in_practice">reset</string>
     <string name="duplicate">duplicate</string>
+    <string name="resume_session_in_practice">resume</string>
 
 </resources>

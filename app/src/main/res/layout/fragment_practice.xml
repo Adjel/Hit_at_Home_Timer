@@ -19,17 +19,17 @@
         android:textColor="@color/blue_yonder"
         android:textSize="@dimen/countdown_text_size"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/scroll_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/scroll_view"/>
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/button_practice_reset_session"
-        app:layout_constraintTop_toBottomOf="@id/text_view_practice_countdown">
+        app:layout_constraintTop_toBottomOf="@id/text_view_practice_countdown"
+        app:layout_constraintBottom_toTopOf="@id/barrier">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -95,11 +95,20 @@
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="button_practice_start_session,button_practice_pause_session, button_practice_reset_session,button_practice_resume_session"
+        />
+
     <Button
         android:id="@+id/button_practice_reset_session"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/big_buttons"
         android:elevation="20dp"
         android:shadowColor="@color/dark_blue"
@@ -108,10 +117,50 @@
         android:textSize="@dimen/large_button_text_size"
         android:visibility="gone"
         app:backgroundTint="@color/khaki_web_bone"
-        app:layout_constraintBottom_toTopOf="@id/button_practice_start_session"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
+        app:layout_constraintBottom_toTopOf="@id/button_practice_resume_session"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button_practice_pause_session"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="100dp"
+        android:background="@drawable/big_buttons"
+        android:elevation="20dp"
+        android:shadowColor="@color/dark_blue"
+        android:text="@string/pause_session_in_practice"
+        android:textColor="@color/dark_blue"
+        android:textSize="@dimen/large_button_text_size"
+        android:visibility="gone"
+        app:backgroundTint="@color/khaki_web_bone"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/scroll_view" />
+        app:layout_constraintEnd_toEndOf="parent"
+ />
+
+    <Button
+        android:id="@+id/button_practice_resume_session"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="45dp"
+        android:background="@drawable/big_buttons"
+        android:elevation="20dp"
+        android:shadowColor="@color/dark_blue"
+        android:text="@string/resume_session_in_practice"
+        android:textColor="@color/dark_blue"
+        android:textSize="@dimen/large_button_text_size"
+        android:visibility="gone"
+        app:backgroundTint="@color/khaki_web_bone"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
     <Button
         android:id="@+id/button_practice_start_session"
@@ -126,9 +175,12 @@
         android:textColor="@color/dark_blue"
         android:textSize="@dimen/large_button_text_size"
         app:backgroundTint="@color/khaki_web_bone"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_practice_reset_session" />
+        app:layout_constraintEnd_toEndOf="parent"
+      />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -89,7 +89,7 @@ interface SessionDao {
 
     @Transaction
     @Query("SELECT * FROM session_table ORDER BY dateCreated DESC LIMIT 1")
-    suspend fun lastSessionWithStepsAndExercises(): SessionWithStepsAndExercises
+    suspend fun lastSessionWithStepsAndExercises(): SessionWithStepsAndExercises?
 
 
     @Transaction
