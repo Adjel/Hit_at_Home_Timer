@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.PopupMenu
+import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.DiffUtil
@@ -97,7 +98,8 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                     }
                 }
 
-                editTextCreationExerciseName.doAfterTextChanged { editableName ->
+                editTextCreationExerciseName.addTextChangedListener { editableName ->
+
                     fun sendEventToViewModel(adapterParentPosition: Int, adapterPosition: Int, editableName: Editable) : MutableLiveData<CreationListEvent> {
                         event.value = CreationListEvent.OnExerciseNameChanged(
                             adapterParentPosition,
@@ -107,46 +109,41 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                         return event
                     }
 
-                    if (adapterPosition != RecyclerView.NO_POSITION) {
+                    /** input is send only if value changed and is not empty */
+                    if (adapterPosition != RecyclerView.NO_POSITION && editableName?.length!! > 0) {
 
-                        if (editableName?.length!! > 0) {
+                        /** when user hit enter */
+                        editTextCreationExerciseName.setOnKeyListener { _, keyCode, keyEvent ->
+                            var clicked = false
 
-                            /** input is send only if value changed and is not empty */
-                            if (editableName.isNotEmpty() && editableName.toString() != getItem(
-                                    adapterPosition
-                                ).name
-                            ) {
+                            if (keyEvent.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
 
-                                /** when user hit enter */
-                                editTextCreationExerciseName.setOnKeyListener { _, keyCode, keyEvent ->
+                                    sendEventToViewModel(
+                                        adapterParentPosition,
+                                        adapterPosition,
+                                        editableName
+                                    )
 
-                                    if (keyEvent.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
-
-                                        sendEventToViewModel(
-                                            adapterParentPosition,
-                                            adapterPosition,
-                                            editableName
-                                        )
-                                    }
-                                    /** close the keyboard and tell to KeyListener that event is consumed */
-                                    closeKeyBoard(this.editTextCreationExerciseName)
-                                    true
-                                }
-
-                                /** get input when editText focus changed */
-                                editTextCreationExerciseName.setOnFocusChangeListener { _, hasFocus ->
-
-                                    if (!hasFocus) {
-                                        sendEventToViewModel(
-                                            adapterParentPosition,
-                                            adapterPosition,
-                                            editableName
-                                        )
-                                    }
-                                }
+                                /** close the keyboard and tell to KeyListener that event is consumed */
+                                closeKeyBoard(this.editTextCreationExerciseName)
+                                clicked = true
                             }
 
+                            /** get input when editText focus changed */
+                            editTextCreationExerciseName.setOnFocusChangeListener { _, hasFocus ->
+
+                                if (!hasFocus) {
+                                    sendEventToViewModel(
+                                        adapterParentPosition,
+                                        adapterPosition,
+                                        editableName
+                                    )
+                                }
+                            }
+                            clicked
+
                         }
+
                     }
 
                 }

@@ -1,6 +1,7 @@
 package com.HitatHomeTimer.ui.practice
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
@@ -32,7 +33,6 @@ class PracticeFragment : Fragment(R.layout.fragment_practice) {
         get() = practiceViewModel.currentExerciseTimer
     private var prepareCountDownRunning: Boolean = false
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -40,12 +40,19 @@ class PracticeFragment : Fragment(R.layout.fragment_practice) {
 
         binding.apply {
 
-//            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-//                textViewPracticeSessionName.text = practiceViewModel.sessionWithStepsAndExercises.session.name
-//            }
-
-            practiceViewModel.currentExerciseTimer.observe(viewLifecycleOwner) {
-                    textViewPracticeSessionName.text = it.name
+            practiceViewModel.timerState.observe(viewLifecycleOwner) { timerState ->
+                Log.d("PracticeViewModel", "onViewCreated: ${timerState}")
+                when (timerState) {
+                    PracticeViewModel.TimerState.PREPARING -> textViewPracticeSessionName.text = "Good luck!"
+                    PracticeViewModel.TimerState.RUNNING -> {
+                        practiceViewModel.currentExerciseTimer.observe(viewLifecycleOwner) { exercise ->
+                            if (exercise.exerciseId > -1) {
+                                textViewPracticeSessionName.text = exercise?.name
+                            }
+                        }
+                    }
+                    PracticeViewModel.TimerState.FINISHED -> textViewPracticeSessionName.text = "Congratulations!!"
+                }
             }
 
             recyclerViewPracticeSession.apply {
@@ -103,5 +110,15 @@ class PracticeFragment : Fragment(R.layout.fragment_practice) {
 
         }
 
+    }
+
+    override fun onPause() {
+        //TODO don't call onReset and retrieve data (timer status) when fragment is open again
+        // create logic if onPause is called during preparation
+
+        super.onPause()
+        Log.d("pause", "onPause: practice on Paused")
+        practiceViewModel.buttonsClicks(PracticeViewModel.ButtonsClicks.OnPause)
+        practiceViewModel.buttonsClicks(PracticeViewModel.ButtonsClicks.OnReset)
     }
 }

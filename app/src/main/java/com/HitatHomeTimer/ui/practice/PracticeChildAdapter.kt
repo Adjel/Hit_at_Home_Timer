@@ -26,16 +26,14 @@ class PracticeChildAdapter(val fragment: PracticeFragment) :
             binding.apply {
                 textViewItemPracticeExerciseName.text = exercise.name
                 textViewItemPracticeExerciseTimer.text = exercise.timerFormatted
-
-
             }
 
             fragment.currentExerciseTimer.observe(fragment.viewLifecycleOwner) {
 
-                Log.d("practice", "bind in child: ${it}")
-
                 if (getItem(adapterPosition).exerciseId == it.exerciseId) {
-//                    itemView.requestFocus()
+                    itemView.requestFocus()
+                    Log.d("practice", "bind in child: ${it}")
+
                     binding.cardviewCreationExercise.setBackgroundResource(R.drawable.practice_focus_exercise_cardview_color_and_border)
                 } else {
                     binding.cardviewCreationExercise.setBackgroundResource(R.drawable.practice_exercise_cardview_color_and_border)

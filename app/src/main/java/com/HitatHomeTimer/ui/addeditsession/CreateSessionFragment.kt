@@ -1,11 +1,14 @@
 package com.HitatHomeTimer.ui.addeditsession
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -37,10 +40,21 @@ class CreateSessionFragment : Fragment(R.layout.fragment_create_session) {
             createSessionViewModel.sessionWithStepsAndExercises.observe(viewLifecycleOwner) {
                 editTextViewCreationStepName.setText(it?.session?.name)
 
-                editTextViewCreationStepName.addTextChangedListener { editable ->
+                editTextViewCreationStepName.doAfterTextChanged { editable ->
                     if (editable != null && editable.isNotEmpty()) {
                         createSessionViewModel.sessionWithStepsAndExercises.value?.session?.name =
                             editable.toString()
+
+                        editTextViewCreationStepName.setOnFocusChangeListener { view, hasFocus ->
+
+                            if (!hasFocus) {
+                                createSessionViewModel.sessionWithStepsAndExercises.value?.session?.name =
+                                    editable.toString()
+                                view.clearFocus()
+                                val inputMethodManager  = view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                                inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+                            }
+                        }
                     }
                 }
             }

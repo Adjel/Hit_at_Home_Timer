@@ -54,7 +54,7 @@ class PracticeParentListAdapter(val fragment: PracticeFragment) :
                     Log.d("practice", "bind in parent: value of currentExerciseTimer ${it}")
 
                     if (getItem(adapterPosition).step.stepId == it.stepId) {
-//                        cardviewPracticeSession.requestFocus()
+                        cardviewPracticeSession.requestFocus()
                     }
                 }
             }
