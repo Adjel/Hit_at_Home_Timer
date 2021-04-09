@@ -32,8 +32,9 @@ class PracticeViewModel(
     var doRepeat: Boolean = false
     var repeatedTimes = 0
     var timeLeft: Long = 0
-    var tones = ToneGenerator(AudioManager.STREAM_MUSIC, 150)
+    var tones = ToneGenerator(AudioManager.STREAM_MUSIC, 250)
     val dateFormat = SimpleDateFormat("mm:ss")
+
     /**
      * Fragment can't observe this liveData because is retrieving sessionWithStepsAndExercises, to avoiding a nullPointerException we directly retrieve the data
      */
@@ -198,12 +199,8 @@ class PracticeViewModel(
                 if (millisUntilFinished < exercise?.timer?.plus(1000) ?: timer) {
                     _textCountDown.value = dateFormat.format(millisUntilFinished)
                 }
-                if (millisUntilFinished in 1001..5000 && millisUntilFinished < exercise?.timer ?: timer && millisUntilFinished.rem(1000) > 500) {
+                if (millisUntilFinished in 500..5000 && millisUntilFinished < exercise?.timer ?: timer && millisUntilFinished.rem(1000) > 500) {
                     tones.startTone(ToneGenerator.TONE_PROP_BEEP,2000)
-                    Log.d("left", "onTick: $millisUntilFinished")
-                }
-                if (millisUntilFinished < 1000) {
-                    tones.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 2000)
                 }
             }
             /**
@@ -220,6 +217,7 @@ class PracticeViewModel(
             override fun onFinish() {
                 if (stepWithExercisesIndex < sessionWithStepsAndExercises!!.stepList.size) {
 
+                    tones.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 2000)
                     /**
                      * onFinish is only called when onStart was called. When onStart is called,
                      * only the first timer is launch. If the first is launched, onFinish access to the second and launch loop.

@@ -51,8 +51,6 @@ class PracticeParentListAdapter(val fragment: PracticeFragment) :
                 }
 
                 fragment.currentStepTimer.observe(fragment.viewLifecycleOwner) {
-                    Log.d("practice", "bind in parent: value of currentExerciseTimer ${it}")
-
                     if (getItem(adapterPosition).step.stepId == it.stepId) {
                         cardviewPracticeSession.requestFocus()
                     }

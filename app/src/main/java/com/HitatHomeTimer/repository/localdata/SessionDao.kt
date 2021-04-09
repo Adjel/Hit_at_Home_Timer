@@ -33,10 +33,6 @@ interface SessionDao {
     fun getAllSessionWithStepsAndExercises(): Flow<List<SessionWithStepsAndExercises>>
 
     @Transaction
-    @Query("SELECT * FROM session_table WHERE sessionId = :sessionId")
-    fun getSessionWithStepsAndExercisesById(sessionId: Long): Flow<SessionWithStepsAndExercises>
-
-    @Transaction
     suspend fun upsertSession(sessionWithStepsExercise: SessionWithStepsAndExercises) {
         if (isSessionExist(sessionWithStepsExercise.session.sessionId)) {
             // TODO create an upsert function
@@ -79,22 +75,8 @@ interface SessionDao {
     suspend fun insertExercise(exercise: Exercise)
 
     @Transaction
-    @Query("SELECT * FROM exercise_table")
-    fun getAllExercise(): Flow<List<Exercise>>
-
-    @Transaction
-    @Query("SELECT * FROM step_table")
-    fun getStepsWithExercises(): Flow<List<StepWithExercises>>
-
-
-    @Transaction
     @Query("SELECT * FROM session_table ORDER BY dateCreated DESC LIMIT 1")
     suspend fun lastSessionWithStepsAndExercises(): SessionWithStepsAndExercises?
-
-
-    @Transaction
-    @Query("SELECT * FROM session_table WHERE sessionId = :sessionOwnerId")
-    fun getStepAndSessionsWithSessionOwnerId(sessionOwnerId: Long): List<SessionWithSteps>
 
     @Transaction
     @Query("SELECT * FROM session_table WHERE sessionId = :sessionOwnerId")

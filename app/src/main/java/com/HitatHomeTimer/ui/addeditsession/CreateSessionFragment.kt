@@ -19,7 +19,7 @@ import com.hitathometimer.databinding.FragmentCreateSessionBinding
 
 class CreateSessionFragment : Fragment(R.layout.fragment_create_session) {
 
-    // get args passed by fragment navigation when navigate
+    /** get args passed by fragment navigation when navigate */
     private val args: CreateSessionFragmentArgs by navArgs()
     private val createSessionListParentAdapter = CreateSessionListParentAdapter(this)
 
@@ -64,7 +64,7 @@ class CreateSessionFragment : Fragment(R.layout.fragment_create_session) {
                 layoutManager = LinearLayoutManager(requireContext())
                 itemAnimator = null
 
-                // observe liveData event in adapter and pass it to the ViewModel
+                /**  observe liveData event in adapter and pass it to the ViewModel */
                 createSessionListParentAdapter.event.observe(
                     viewLifecycleOwner) {
                     createSessionViewModel.handleEvent(it)
@@ -83,8 +83,9 @@ class CreateSessionFragment : Fragment(R.layout.fragment_create_session) {
         }
 
         createSessionViewModel.sessionWithStepsAndExercises.observe(viewLifecycleOwner) {
-            // we must pass null because we don't observe Room entities LiveData, causes submitList doesn't update the list
-            // which doesn't update the view
+            /** we must pass null because we don't observe Room entities LiveData, causes submitList doesn't update the list
+                which doesn't update the view
+             */
             createSessionListParentAdapter.submitList(
                 null
             )

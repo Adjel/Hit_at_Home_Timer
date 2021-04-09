@@ -32,8 +32,6 @@ class PracticeChildAdapter(val fragment: PracticeFragment) :
 
                 if (getItem(adapterPosition).exerciseId == it.exerciseId) {
                     itemView.requestFocus()
-                    Log.d("practice", "bind in child: ${it}")
-
                     binding.cardviewCreationExercise.setBackgroundResource(R.drawable.practice_focus_exercise_cardview_color_and_border)
                 } else {
                     binding.cardviewCreationExercise.setBackgroundResource(R.drawable.practice_exercise_cardview_color_and_border)

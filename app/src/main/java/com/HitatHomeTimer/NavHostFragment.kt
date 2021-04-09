@@ -41,16 +41,17 @@ class NavHostFragment : AppCompatActivity() {
         navController = navHostFragment.findNavController()
 
 
-        // On rend non clickable le bouton invisible de la BottomNavigationView (implémenté pour éloigner les items de la BottomNavigationView)
-        // INVISIBLE ITEM IN BottomNavigationView SET TO ENABLED
+        /**
+         * set clickable to false for BottomNavigationView invisible button
+         * which is created to center other buttons
+         *  1 is the index of button (first is 0)
+         */
         bottomNavigationView.menu.getItem(1).isEnabled = false
 
         /**
          *   NAVIGATION TRIGGERS
          **/
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-
-            actionBar!!.title = item.title
 
             when (item.itemId) {
                 R.id.navigation_button_session_fragment -> {
@@ -71,9 +72,6 @@ class NavHostFragment : AppCompatActivity() {
         }
 
         addSessionFloatingActionButton.setOnClickListener {
-
-            actionBar!!.title = "Add or edit a workout"
-
             navController.navigate(R.id.createSessionFragment)
             setFloatingActionButtonColor(addSessionFloatingActionButton, R.color.ivory)
             setBottomNavigationViewsCheckable(bottomNavigationView, false)

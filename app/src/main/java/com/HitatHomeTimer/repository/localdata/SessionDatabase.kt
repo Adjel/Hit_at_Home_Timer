@@ -66,45 +66,32 @@ abstract class SessionDatabase : RoomDatabase() {
 
         suspend fun populateDatabase(sessionDao: SessionDao) {
             // Delete all content here.
-            sessionDao.deleteAllSessionWithStepsAndExercises()
+//            sessionDao.deleteAllSessionWithStepsAndExercises()
 
 
 
             // Add sample data.
 
-            var exerciseList = listOf<Exercise>(Exercise("Abdos"), Exercise("Repos", timer = 15000), Exercise("Squats"), Exercise("Repos", timer = 15000), Exercise("Pompes"))
-            var step = Step()
-
-            var exerciseListTwo = listOf<Exercise>(Exercise("Climbers"), Exercise("Repos", timer = 15000), Exercise("Jumpin' Jacks"), Exercise("Repos", timer = 15000), Exercise("Burpees"))
-            var stepTwo = Step()
-
-
-            var stepWithExercises = listOf<StepWithExercises>(StepWithExercises(step, exerciseList), StepWithExercises(stepTwo, exerciseListTwo))
-
-            var session = Session("Hit")
-
-            var sessionWithStepsAndExercises = SessionWithStepsAndExercises(session, stepWithExercises)
-            sessionDao.insertSessionWithStepsAndExercises(sessionWithStepsAndExercises)
-
-
-
-            exerciseList = listOf<Exercise>(Exercise("Prepare", timer = 1200000))
-            step = Step()
-
-            exerciseListTwo = listOf<Exercise>(Exercise("Run"), Exercise("Repos"), Exercise("Run"), Exercise("Repos",), Exercise("Run"), Exercise("Repos",), Exercise("Run"),
-                Exercise("Run"), Exercise("Repos"), Exercise("Run"), Exercise("Repos",), Exercise("Run"), Exercise("Repos",), Exercise("Run"))
-            stepTwo = Step(timesNumber = 5)
-
-            var exerciseListThree = listOf<Exercise>(Exercise("PompesPompesPompes"), Exercise("Repos", timer = 10000))
-            var stepThree = Step(timesNumber = 2)
-
-
-            stepWithExercises = listOf<StepWithExercises>(StepWithExercises(step, exerciseList), StepWithExercises(stepTwo, exerciseListTwo), StepWithExercises(stepThree, exerciseListThree))
-
-            session = Session("Fractionné")
-
-            sessionWithStepsAndExercises = SessionWithStepsAndExercises(session, stepWithExercises)
-            sessionDao.insertSessionWithStepsAndExercises(sessionWithStepsAndExercises)
+//            var exerciseList = listOf<Exercise>(Exercise("Abdos"), Exercise("Repos", timer = 15000), Exercise("Squats"), Exercise("Repos", timer = 15000), Exercise("Pompes"))
+//            var step = Step()
+//            var exerciseListTwo = listOf<Exercise>(Exercise("Climbers"), Exercise("Repos", timer = 15000), Exercise("Jumpin' Jacks"), Exercise("Repos", timer = 15000), Exercise("Burpees"))
+//            var stepTwo = Step()
+//            var stepWithExercises = listOf<StepWithExercises>(StepWithExercises(step, exerciseList), StepWithExercises(stepTwo, exerciseListTwo))
+//            var session = Session("Hit")
+//            var sessionWithStepsAndExercises = SessionWithStepsAndExercises(session, stepWithExercises)
+//            sessionDao.insertSessionWithStepsAndExercises(sessionWithStepsAndExercises)
+//
+//            exerciseList = listOf<Exercise>(Exercise("Prepare", timer = 1200000))
+//            step = Step()
+//            exerciseListTwo = listOf<Exercise>(Exercise("Run"), Exercise("Repos"), Exercise("Run"), Exercise("Repos",), Exercise("Run"), Exercise("Repos",), Exercise("Run"),
+//                Exercise("Run"), Exercise("Repos"), Exercise("Run"), Exercise("Repos",), Exercise("Run"), Exercise("Repos",), Exercise("Run"))
+//            stepTwo = Step(timesNumber = 5)
+//            var exerciseListThree = listOf<Exercise>(Exercise("PompesPompesPompes"), Exercise("Repos", timer = 10000))
+//            var stepThree = Step(timesNumber = 2)
+//            stepWithExercises = listOf<StepWithExercises>(StepWithExercises(step, exerciseList), StepWithExercises(stepTwo, exerciseListTwo), StepWithExercises(stepThree, exerciseListThree))
+//            session = Session("Fractionné")
+//            sessionWithStepsAndExercises = SessionWithStepsAndExercises(session, stepWithExercises)
+//            sessionDao.insertSessionWithStepsAndExercises(sessionWithStepsAndExercises)
         }
     }
 }

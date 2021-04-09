@@ -113,12 +113,11 @@ class PracticeFragment : Fragment(R.layout.fragment_practice) {
     }
 
     override fun onPause() {
-        //TODO don't call onReset and retrieve data (timer status) when fragment is open again
+        //TODO retrieve data (timer status) when fragment is open again
         // create logic if onPause is called during preparation
 
         super.onPause()
         Log.d("pause", "onPause: practice on Paused")
         practiceViewModel.buttonsClicks(PracticeViewModel.ButtonsClicks.OnPause)
-        practiceViewModel.buttonsClicks(PracticeViewModel.ButtonsClicks.OnReset)
     }
 }
