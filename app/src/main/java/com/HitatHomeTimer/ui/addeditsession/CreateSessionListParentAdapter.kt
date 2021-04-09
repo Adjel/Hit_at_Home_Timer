@@ -25,7 +25,9 @@ class CreateSessionListParentAdapter(val fragment: CreateSessionFragment, val ev
 
             binding.apply {
 
-                // create a popup menu to delete or duplicate a step
+                /**
+                 * create a popup menu to delete or duplicate a step
+                 */
                 imageButtonCreationSetsMenu.setOnClickListener {
                     val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
@@ -103,11 +105,15 @@ class CreateSessionListParentAdapter(val fragment: CreateSessionFragment, val ev
 
         fun bind(stepWithExercises: StepWithExercises, listener: CreateSessionListChildAdapter.CustomClickListener) {
 
-            // create the child adapter
-            // pass the parent adapter position in child ListAdapter parameters to pass it into events in child ListAdapter
+            /**
+             * create the child adapter
+             * pass the parent adapter position in child ListAdapter parameters to pass it into events in child ListAdapter
+             */
             val childLayoutManager = LinearLayoutManager(binding.recyclerViewCreationExercise.context)
 
-            // pass a parent adapterPosition listener to the childAdapter
+            /**
+             *  pass a parent adapterPosition listener to the childAdapter
+             */
             val createSessionListChildAdapter = CreateSessionListChildAdapter(parentPosition = listener)
 
             createSessionListChildAdapter.submitList(stepWithExercises.exerciseLists.toMutableList())
@@ -120,7 +126,9 @@ class CreateSessionListParentAdapter(val fragment: CreateSessionFragment, val ev
                     adapter = createSessionListChildAdapter
                     layoutManager = childLayoutManager
 
-                    // observe child ListAdapter events and pass it into viewModel by fragment
+                    /**
+                    *  observe child ListAdapter events and pass it into viewModel by fragment
+                     */
                     createSessionListChildAdapter.event.observe(
                         fragment.viewLifecycleOwner) {
                         fragment.createSessionViewModel.handleEvent(it)
@@ -144,7 +152,9 @@ class CreateSessionListParentAdapter(val fragment: CreateSessionFragment, val ev
     override fun onBindViewHolder(holder: CreateSessionListParentViewHolder, position: Int) {
         val current = getItem(holder.adapterPosition)
 
-        // pass the adapterPosition to the child adapter by overriding a child parameter object
+        /**
+         * pass the adapterPosition to the child adapter by overriding a child parameter object
+         */
        val listener = object : CreateSessionListChildAdapter.CustomClickListener {
            override fun onItemClick(): Int {
                return holder.adapterPosition

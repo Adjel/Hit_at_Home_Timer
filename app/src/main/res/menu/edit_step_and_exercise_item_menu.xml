@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/session_item_menu_duplicate"
+        android:enabled="true"
+        android:title="@string/duplicate"/>
+    <item
+        android:id="@+id/session_item_menu_delete"
+        android:enabled="true"
+        android:title="@string/delete"/>
+</menu>

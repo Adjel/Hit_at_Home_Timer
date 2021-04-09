@@ -1,6 +1,7 @@
 package com.HitatHomeTimer.ui.addeditsession
 
 import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.*
 import androidx.savedstate.SavedStateRegistryOwner
 import com.HitatHomeTimer.repository.SessionRepository
@@ -117,13 +118,15 @@ class CreateSessionViewModel(
         sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
     }
 
-
     private fun onDeleteExercise(parentPosition: Int, position: Int) = viewModelScope.launch {
-        mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists =
-            mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists.minus(
-                mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists[position])
 
-        sessionWithStepsAndExercises.postValue(mutableSessionWithStepsAndExercises.value)
+        /**
+         * get a MutableList from liveData to use removeAt function to delete item at specific position (liveData hasn't this function)
+         */
+        val itemDeletedList: MutableList<Exercise> = mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists.toMutableList()
+        itemDeletedList.removeAt(position)
+        mutableSessionWithStepsAndExercises.value!!.stepList[parentPosition].exerciseLists = itemDeletedList
+        sessionWithStepsAndExercises.value = mutableSessionWithStepsAndExercises.value
     }
 
     private fun onUpdateExerciseTimer(parentPosition: Int, adapterPosition: Int, updateTime: UpdateTimeNumber, timer: Long) = viewModelScope.launch {
@@ -198,7 +201,7 @@ class CreateSessionViewModel(
                     Step(),
                     exerciseLists = listOf(
                         Exercise(
-                            "wooork", timer = 30000
+                            "work", timer = 30000
                         ),
                         Exercise("Rest", timer = 15000)
                     )))))
