@@ -6,7 +6,7 @@
     app:startDestination="@id/sessionFragment">
     <fragment
         android:id="@+id/sessionFragment"
-        android:name="com.HitatHomeTimer.ui.session.SessionFragment"
+        android:name="com.HiitHomeTimer.ui.session.SessionFragment"
         android:label="fragment_workout_session"
         tools:layout="@layout/fragment_workout_session" >
         <action
@@ -17,29 +17,28 @@
             app:destination="@id/createSessionFragment" />
         <argument
             android:name="sessions"
-            app:argType="com.HitatHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises"
+            app:argType="com.HiitHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises"
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/practiceFragment"
-        android:name="com.HitatHomeTimer.ui.practice.PracticeFragment"
+        android:name="com.HiitHomeTimer.ui.practice.PracticeFragment"
         android:label="fragment_practice"
         tools:layout="@layout/fragment_practice" >
         <argument
             android:name="sessionToPractice"
-            app:argType="com.HitatHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:argType="com.HiitHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/createSessionFragment"
-        android:name="com.HitatHomeTimer.ui.addeditsession.CreateSessionFragment"
+        android:name="com.HiitHomeTimer.ui.addeditsession.CreateSessionFragment"
         android:label="fragment_create_session"
         tools:layout="@layout/fragment_create_session" >
         <argument
             android:name="addedditsession"
-            app:argType="com.HitatHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises"
+            app:argType="com.HiitHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises"
             app:nullable="true"
             android:defaultValue="@null" />
         <action

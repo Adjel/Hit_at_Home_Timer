@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Hit at Home Timer</string>
+    <string name="app_name">Hiit Home Timer</string>
     <string name="access_alarm">access to alarm</string>
     <string name="add_alarm">add an alarm</string>
     <string name="delete">delete</string>
