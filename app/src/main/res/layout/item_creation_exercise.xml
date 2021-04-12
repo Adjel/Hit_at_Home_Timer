@@ -28,7 +28,7 @@
             android:background="@null"
             android:ellipsize="end"
             android:inputType="textAutoComplete"
-            android:text="WorkWorkWorkWork"
+            android:text="Work"
             android:textColor="@color/ivory"
             android:textSize="@dimen/medium_text_size"
             app:layout_constraintBottom_toBottomOf="parent"

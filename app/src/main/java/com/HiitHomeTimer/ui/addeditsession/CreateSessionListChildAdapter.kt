@@ -2,6 +2,7 @@ package com.HiitHomeTimer.ui.addeditsession
 
 import android.app.Activity
 import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -27,9 +28,9 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
 
         /** close keyboard on editText and set focus to null */
         private fun closeKeyBoard(view: View) {
-            view.clearFocus()
             val inputMethodManager  = view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+            view.clearFocus()
         }
 
         init {
@@ -117,7 +118,7 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                     if (adapterPosition != RecyclerView.NO_POSITION && editableName?.length!! > 0) {
 
                         /** when user hit enter */
-                        editTextCreationExerciseName.setOnKeyListener { _, keyCode, keyEvent ->
+                        editTextCreationExerciseName.setOnKeyListener { view, keyCode, keyEvent ->
                             var clicked = false
 
                             if (keyEvent.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -129,7 +130,7 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                                     )
 
                                 /** close the keyboard and tell to KeyListener that event is consumed */
-                                closeKeyBoard(this.editTextCreationExerciseName)
+                                closeKeyBoard(view)
                                 clicked = true
                             }
 
@@ -145,16 +146,13 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                                 }
                             }
                             clicked
-
                         }
-
                     }
-
                 }
-                editTextTimerItemExerciseCreation.doAfterTextChanged { editableTimer ->
+
+                editTextTimerItemExerciseCreation.addTextChangedListener { editableTimer ->
                     /** get format to parse the input string to a validate time */
                     val dateFormat = SimpleDateFormat("mm:ss")
-                    dateFormat.timeZone = TimeZone.getTimeZone("GMT")
 
                     fun sendEventToViewModel(adapterParentPosition : Int, adapterPosition: Int, timer: Long): MutableLiveData<CreationListEvent> {
                         event.value = CreationListEvent.OnExerciseTimerChanged(
@@ -172,6 +170,7 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
 
                             /** give colon back to user if he deleted it and enter a number */
                             if (editableTimer.filter { !it.isDigit() }.toString() != ":" && editableTimer.none { !it.isDigit() }) {
+
                                 if (editableTimer.filter { it.isDigit() }.length <= 1) {
                                     editableTimer.insert(1,":")
                                 }
@@ -221,7 +220,7 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                                          val timer =
                                              dateFormat.parse(editableTimer.toString())?.time!!
 
-                                         Log.d("TextWatcher", ":length = 4 parse it")
+                                         Log.d("TextWatcher", "setOnKeyListener :length = 4 parse it")
 
                                          if (editableTimer.isNotEmpty() && editableTimer.toString() != getItem(
                                                  adapterPosition
@@ -233,7 +232,6 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                                                  adapterPosition,
                                                  timer
                                              )
-                                             closeKeyBoard(this.editTextTimerItemExerciseCreation)
                                          }
                                      }
 
@@ -262,11 +260,10 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                                              adapterPosition,
                                              timer
                                          )
-                                         closeKeyBoard(this.editTextTimerItemExerciseCreation)
-
                                      }
                                  }
                                  enterKeyClicked
+
                              }
 
                             /** when user doesn't validate but click out */
@@ -288,7 +285,7 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                                         val timer =
                                             dateFormat.parse(editableTimer.toString())?.time!!
 
-                                        Log.d("TextWatcher", ":length = 4 parse it")
+                                        Log.d("TextWatcher", "setOnFocusChangeListener :length = 4 parse it")
 
                                         if (editableTimer.isNotEmpty() && editableTimer.toString() != getItem(
                                                 adapterPosition
@@ -300,7 +297,6 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                                                 adapterPosition,
                                                 timer
                                             )
-                                            closeKeyBoard(this.editTextTimerItemExerciseCreation)
                                         }
                                     }
 
@@ -329,7 +325,6 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
                                             adapterPosition,
                                             timer
                                         )
-                                        closeKeyBoard(this.editTextTimerItemExerciseCreation)
                                     }
                                 }
                             }

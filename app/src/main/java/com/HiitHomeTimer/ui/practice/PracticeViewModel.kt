@@ -42,8 +42,9 @@ class PracticeViewModel(
         repository.lastSessionWithStepsAndExercises()
     }
 
-    val sessionWithStepsAndExercises = stateHandle.get<SessionWithStepsAndExercises?>("sessionToPractice")
-        ?: lastSessionWithStepsAndExercises()
+    val sessionWithStepsAndExercises =
+        stateHandle.get<SessionWithStepsAndExercises?>("sessionToPractice")
+            ?: lastSessionWithStepsAndExercises()
 
     /**
      * CountdownTimerFunction
@@ -54,7 +55,10 @@ class PracticeViewModel(
      */
     private fun startClicked() {
 
-        dateFormat.timeZone = TimeZone.getTimeZone("GMT")
+        /**
+        // dateFormat.timeZone = TimeZone.getTimeZone("GMT")
+         commented it because seems like creating bugs
+         */
         _timerState.value = TimerState.PREPARING
 
         if (stepWithExercisesIndex == 0 && exerciseIndex == 0) {
@@ -64,7 +68,7 @@ class PracticeViewModel(
                     _textCountDown.value = dateFormat.format(millisUntilFinished)
 
                     if (millisUntilFinished > 0L && millisUntilFinished.rem(1000) > 500) {
-                        tones.startTone(ToneGenerator.TONE_PROP_BEEP,2000)
+                        tones.startTone(ToneGenerator.TONE_PROP_BEEP, 2000)
                     }
                 }
 
@@ -74,7 +78,8 @@ class PracticeViewModel(
                     _timerState.value = TimerState.RUNNING
 
                     _currentStepTimer.value = sessionWithStepsAndExercises.stepList.first().step
-                    _currentExerciseTimer.value = sessionWithStepsAndExercises.stepList.first().exerciseLists.first()
+                    _currentExerciseTimer.value =
+                        sessionWithStepsAndExercises.stepList.first().exerciseLists.first()
 
                     _buttonsStates.value = ButtonsStates.isPreparationRunning(false)
                 }
@@ -82,7 +87,11 @@ class PracticeViewModel(
             }
             prepareCountDownTimer.start()
         }
-        _buttonsStates.value = ButtonsStates.AreButtonsEnable(isStartEnable = false, isPauseEnable = true, isResetEnable = false)
+        _buttonsStates.value = ButtonsStates.AreButtonsEnable(
+            isStartEnable = false,
+            isPauseEnable = true,
+            isResetEnable = false
+        )
         _buttonsStates.value = ButtonsStates.isPreparationRunning(true)
     }
 
@@ -96,13 +105,25 @@ class PracticeViewModel(
 
     private fun pauseClicked() {
         countDownTimer?.let { onCancelCountDowTimer(it) }
-        _buttonsStates.value = ButtonsStates.AreButtonsEnable(isStartEnable = false, isPauseEnable = false, isResetEnable = true, isResumeEnable = true)
+        _buttonsStates.value = ButtonsStates.AreButtonsEnable(
+            isStartEnable = false,
+            isPauseEnable = false,
+            isResetEnable = true,
+            isResumeEnable = true
+        )
     }
 
     private fun resumedClicked() {
-        Log.d("timer", "resumedClicked stepWithExercisesIndex:  ${stepWithExercisesIndex}, exerciseIndex ${exerciseIndex}, timer: ${timeLeft}")
+        Log.d(
+            "timer",
+            "resumedClicked stepWithExercisesIndex:  ${stepWithExercisesIndex}, exerciseIndex ${exerciseIndex}, timer: ${timeLeft}"
+        )
         startCountDown(null, timeLeft)
-        _buttonsStates.value = ButtonsStates.AreButtonsEnable(isStartEnable = false, isPauseEnable = true, isResetEnable = false)
+        _buttonsStates.value = ButtonsStates.AreButtonsEnable(
+            isStartEnable = false,
+            isPauseEnable = true,
+            isResetEnable = false
+        )
     }
 
     private fun resetClicked() {
@@ -110,19 +131,19 @@ class PracticeViewModel(
     }
 
     private fun resetCountDown() {
-    _buttonsStates.value = ButtonsStates.AreButtonsEnable(
-    isStartEnable = true,
-    isPauseEnable = false,
-    isResetEnable = false,
-    isResumeEnable = false
-    )
-    _textCountDown.value = "00:00"
-    stepWithExercisesIndex = 0
-    exerciseIndex = 0
-    timeLeft = 0
-    repeatedTimes = 0
-    _currentStepTimer.value = Step(stepId = -1)
-    _currentExerciseTimer.value = Exercise("", exerciseId = -1)
+        _buttonsStates.value = ButtonsStates.AreButtonsEnable(
+            isStartEnable = true,
+            isPauseEnable = false,
+            isResetEnable = false,
+            isResumeEnable = false
+        )
+        _textCountDown.value = "00:00"
+        stepWithExercisesIndex = 0
+        exerciseIndex = 0
+        timeLeft = 0
+        repeatedTimes = 0
+        _currentStepTimer.value = Step(stepId = -1)
+        _currentExerciseTimer.value = Exercise("", exerciseId = -1)
     }
 
     /**
@@ -149,11 +170,11 @@ class PracticeViewModel(
 
     private var _timerState: MutableLiveData<TimerState> = MutableLiveData(TimerState.PREPARING)
     val timerState: LiveData<TimerState>
-    get() = _timerState
+        get() = _timerState
 
 
     fun buttonsClicks(event: ButtonsClicks) {
-        when(event) {
+        when (event) {
             is ButtonsClicks.OnStart -> startClicked()
             is ButtonsClicks.OnPause -> pauseClicked()
             is ButtonsClicks.OnReset -> resetClicked()
@@ -162,20 +183,22 @@ class PracticeViewModel(
     }
 
     sealed class ButtonsStates {
-        data class AreButtonsEnable(val isStartEnable: Boolean = true,
-                                    val isPauseEnable: Boolean = false,
-                                    val isResetEnable: Boolean = false,
-                                    val isResumeEnable: Boolean = false)
-            : ButtonsStates()
-        data class isPreparationRunning(val isPreparationCountDownRunning: Boolean = false)
-            : ButtonsStates()
+        data class AreButtonsEnable(
+            val isStartEnable: Boolean = true,
+            val isPauseEnable: Boolean = false,
+            val isResetEnable: Boolean = false,
+            val isResumeEnable: Boolean = false
+        ) : ButtonsStates()
+
+        data class isPreparationRunning(val isPreparationCountDownRunning: Boolean = false) :
+            ButtonsStates()
     }
 
     sealed class ButtonsClicks {
-        object OnStart: ButtonsClicks()
-        object OnPause: ButtonsClicks()
-        object OnReset: ButtonsClicks()
-        object OnResumed: ButtonsClicks()
+        object OnStart : ButtonsClicks()
+        object OnPause : ButtonsClicks()
+        object OnReset : ButtonsClicks()
+        object OnResumed : ButtonsClicks()
     }
 
     enum class TimerState {
@@ -186,11 +209,11 @@ class PracticeViewModel(
      * @CountDownTimer class to create a loop on every timer
      * */
 
-      fun startCountDown(exercise: Exercise?, timer: Long = 0) {
+    fun startCountDown(exercise: Exercise?, timer: Long = 0) {
 
-          dateFormat.timeZone = TimeZone.getTimeZone("GMT")
+        dateFormat.timeZone = TimeZone.getTimeZone("GMT")
 
-        countDownTimer = object : CountDownTimer(exercise?.timer?.plus(2000) ?: timer,500) {
+        countDownTimer = object : CountDownTimer(exercise?.timer?.plus(2000) ?: timer, 500) {
 
             override fun onTick(millisUntilFinished: Long) {
 
@@ -199,10 +222,20 @@ class PracticeViewModel(
                 if (millisUntilFinished < exercise?.timer?.plus(1000) ?: timer) {
                     _textCountDown.value = dateFormat.format(millisUntilFinished)
                 }
-                if (millisUntilFinished in 500..5000 && millisUntilFinished < exercise?.timer ?: timer && millisUntilFinished.rem(1000) > 500) {
-                    tones.startTone(ToneGenerator.TONE_PROP_BEEP,2000)
+                if (millisUntilFinished in 1000..5000 && millisUntilFinished < exercise?.timer ?: timer && millisUntilFinished.rem(
+                        1000
+                    ) > 500
+                ) {
+                    tones.startTone(ToneGenerator.TONE_PROP_BEEP, 2000)
+                }
+
+                if (millisUntilFinished < 1000 && millisUntilFinished < exercise?.timer ?: timer && millisUntilFinished.rem(
+                        1000
+                    ) > 500) {
+                    tones.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 2000)
                 }
             }
+
             /**
              * @CountDown loop which will trigger all timers in a session
              */
@@ -217,12 +250,20 @@ class PracticeViewModel(
             override fun onFinish() {
                 if (stepWithExercisesIndex < sessionWithStepsAndExercises!!.stepList.size) {
 
-                    tones.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 2000)
                     /**
                      * onFinish is only called when onStart was called. When onStart is called,
                      * only the first timer is launch. If the first is launched, onFinish access to the second and launch loop.
+                     * Whe have to checked multiple conditions when the first timer is read.
                      */
-                    if (stepWithExercisesIndex == 0 && exerciseIndex == 0) {
+                    if (stepWithExercisesIndex == 0 && exerciseIndex == 0 && exerciseIndex + 1 == sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size) {
+                        if (sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].step.timesNumber > 1) {
+                            repeatedTimes += 1
+                        } else {
+                            onTimerFinished()
+                            return
+                        }
+                    }
+                    if (stepWithExercisesIndex == 0 && exerciseIndex == 0 && exerciseIndex + 1 < sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size && repeatedTimes == 0) {
                         exerciseIndex += 1
                     }
 
@@ -261,18 +302,22 @@ class PracticeViewModel(
                     }
 
                 } else {
-                    // TODO Congrats
-                        _timerState.value = TimerState.FINISHED
-                    tones.startTone(ToneGenerator.TONE_PROP_BEEP2,600)
-                 resetCountDown()
-                    Log.d("PracticeViewModel", "TIMER FINISHED")
-                // TODO Congrats
+                    onTimerFinished()
                 }
             }
         }
         countDownTimer!!.start()
 
-      }
+    }
+
+    private fun onTimerFinished() {
+        // TODO Congrats
+        _timerState.value = TimerState.FINISHED
+        tones.startTone(ToneGenerator.TONE_PROP_BEEP2, 600)
+        resetCountDown()
+        Log.d("PracticeViewModel", "TIMER FINISHED")
+        // TODO Congrats
+    }
 
 
     private fun onCancelCountDowTimer(timer: CountDownTimer) : Long {
