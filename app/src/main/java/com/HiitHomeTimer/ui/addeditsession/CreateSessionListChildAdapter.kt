@@ -2,14 +2,11 @@ package com.HiitHomeTimer.ui.addeditsession
 
 import android.app.Activity
 import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.PopupMenu
 import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -152,7 +149,9 @@ class CreateSessionListChildAdapter(val event: MutableLiveData<CreationListEvent
 
                 editTextTimerItemExerciseCreation.addTextChangedListener { editableTimer ->
                     /** get format to parse the input string to a validate time */
+
                     val dateFormat = SimpleDateFormat("mm:ss")
+                    dateFormat.timeZone = TimeZone.getTimeZone("GMT")
 
                     fun sendEventToViewModel(adapterParentPosition : Int, adapterPosition: Int, timer: Long): MutableLiveData<CreationListEvent> {
                         event.value = CreationListEvent.OnExerciseTimerChanged(

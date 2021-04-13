@@ -251,7 +251,6 @@ class PracticeViewModel(
                 if (stepWithExercisesIndex < sessionWithStepsAndExercises!!.stepList.size) {
 
                     doRepeat = stepTimes > 1
-
                     /**
                      * Check if all exercises timers have been read, if yes, check if have to read again (repetition)
                      */
@@ -285,13 +284,11 @@ class PracticeViewModel(
                     if (exerciseIndex < sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size && exerciseIndex + 1 < sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size) {
                         exerciseIndex += 1
                         launch()
-                        return
                     } else if (stepWithExercisesIndex < sessionWithStepsAndExercises.stepList.size && stepWithExercisesIndex + 1 < sessionWithStepsAndExercises.stepList.size) {
                         exerciseIndex = 0
                         repeatedTimes = 0
                         stepWithExercisesIndex += 1
                         launch()
-                        return
                     }
                     else {
                         onTimerFinished()
