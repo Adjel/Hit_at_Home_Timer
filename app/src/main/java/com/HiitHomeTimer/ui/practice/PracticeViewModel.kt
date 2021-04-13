@@ -250,57 +250,55 @@ class PracticeViewModel(
             override fun onFinish() {
                 if (stepWithExercisesIndex < sessionWithStepsAndExercises!!.stepList.size) {
 
+                    doRepeat = stepTimes > 1
+
+                    /**
+                     * Check if all exercises timers have been read, if yes, check if have to read again (repetition)
+                     */
+                    if (exerciseIndex + 1 == sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size && repeatedTimes == 0) {
+                        stepTimes =
+                            sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].step.timesNumber
+
+                        if (stepTimes > 1) {
+                            exerciseIndex = 0
+                            repeatedTimes += 1
+                            stepTimes -= repeatedTimes
+                            launch()
+                            return
+                        }
+                    }
+
+                    if (doRepeat) {
+                        if (exerciseIndex < sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size && exerciseIndex + 1 < sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size) {
+                            exerciseIndex += 1
+                            launch()
+                        }
+                        if (exerciseIndex + 1 == sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size) {
+                            exerciseIndex = 0
+                            repeatedTimes += 1
+                            stepTimes -= repeatedTimes
+                            launch()
+                        }
+                        return
+                    }
+
+                    if (exerciseIndex < sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size && exerciseIndex + 1 < sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size) {
+                        exerciseIndex += 1
+                        launch()
+                    } else if (stepWithExercisesIndex < sessionWithStepsAndExercises.stepList.size && stepWithExercisesIndex + 1 < sessionWithStepsAndExercises.stepList.size) {
+                        exerciseIndex = 0
+                        repeatedTimes = 0
+                        stepWithExercisesIndex += 1
+                        launch()
+                    }
+                    else {
+                        onTimerFinished()
+                    }
                     /**
                      * onFinish is only called when onStart was called. When onStart is called,
                      * only the first timer is launch. If the first is launched, onFinish access to the second and launch loop.
                      * Whe have to checked multiple conditions when the first timer is read.
                      */
-                    if (stepWithExercisesIndex == 0 && exerciseIndex == 0 && exerciseIndex + 1 == sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size) {
-                        if (sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].step.timesNumber > 1) {
-                            repeatedTimes += 1
-                        } else {
-                            onTimerFinished()
-                            return
-                        }
-                    }
-                    if (stepWithExercisesIndex == 0 && exerciseIndex == 0 && exerciseIndex + 1 < sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size && repeatedTimes == 0) {
-                        exerciseIndex += 1
-                    }
-
-                    /**
-                     * Check if all exercises timers have been read, if yes, check if have to read again (repetition)
-                     */
-                    if (exerciseIndex == sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size - 1) {
-
-                        stepTimes =
-                            sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].step.timesNumber - repeatedTimes
-                        doRepeat = stepTimes > 1
-
-                        if (doRepeat) {
-                            launch()
-                            if (exerciseIndex + 1 < sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size) {
-                                exerciseIndex += 1
-
-                            } else if (exerciseIndex + 1 == sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size) {
-                                exerciseIndex = 0
-                                repeatedTimes += 1
-                            }
-                            return
-                        }
-                    }
-
-                    if (exerciseIndex < sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size) {
-                        launch()
-                        if (exerciseIndex + 1 < sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size) {
-                            exerciseIndex += 1
-                        } else {
-                            stepWithExercisesIndex += 1
-
-                            repeatedTimes = 0
-                            exerciseIndex = 0
-                        }
-                    }
-
                 } else {
                     onTimerFinished()
                 }
