@@ -285,20 +285,17 @@ class PracticeViewModel(
                     if (exerciseIndex < sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size && exerciseIndex + 1 < sessionWithStepsAndExercises.stepList[stepWithExercisesIndex].exerciseLists.size) {
                         exerciseIndex += 1
                         launch()
+                        return
                     } else if (stepWithExercisesIndex < sessionWithStepsAndExercises.stepList.size && stepWithExercisesIndex + 1 < sessionWithStepsAndExercises.stepList.size) {
                         exerciseIndex = 0
                         repeatedTimes = 0
                         stepWithExercisesIndex += 1
                         launch()
+                        return
                     }
                     else {
                         onTimerFinished()
                     }
-                    /**
-                     * onFinish is only called when onStart was called. When onStart is called,
-                     * only the first timer is launch. If the first is launched, onFinish access to the second and launch loop.
-                     * Whe have to checked multiple conditions when the first timer is read.
-                     */
                 } else {
                     onTimerFinished()
                 }
