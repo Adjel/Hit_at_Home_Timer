@@ -1,6 +1,7 @@
 package com.HiitHomeTimer.ui.session
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
@@ -10,13 +11,14 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.HiitHomeTimer.di.SessionApplication
+import com.HiitHomeTimer.di.HiitHomeTimerApplication
 import com.HiitHomeTimer.repository.localdata.entities.Session
 import com.HiitHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.hiithometimer.R
 import com.hiithometimer.databinding.FragmentWorkoutSessionBinding
+import com.hiithometimer.databinding.NavHostFragmentBinding
 
 private const val TAG = "SessionFragment"
 
@@ -31,7 +33,7 @@ class SessionFragment : Fragment(R.layout.fragment_workout_session),
 
     private val sessionViewModel: SessionViewModel by viewModels{
             SessionViewModelFactory(
-                ((requireActivity().application as SessionApplication).repository),
+                ((requireActivity().application as HiitHomeTimerApplication).repository),
                 this,
                 args.toBundle()
             )
@@ -41,16 +43,10 @@ class SessionFragment : Fragment(R.layout.fragment_workout_session),
         super.onViewCreated(view, savedInstanceState)
 
         val binding = FragmentWorkoutSessionBinding.bind(view)
-
-
-        bottomNavigationView =
-            requireActivity().findViewById(R.id.bottom_navigation_view)
-
         navController = view.findNavController()
-
-        floatingActionButton =
-            requireActivity().findViewById(R.id.floating_action_button_add_session)
-
+        val navHostBinding = NavHostFragmentBinding.inflate(LayoutInflater.from(this.requireContext()))
+        bottomNavigationView = navHostBinding.bottomNavigationView
+        floatingActionButton = navHostBinding.floatingActionButtonAddSession
 
         binding.apply {
             recyclerviewSession.apply {
@@ -84,12 +80,8 @@ class SessionFragment : Fragment(R.layout.fragment_workout_session),
         inflater.inflate(R.menu.session_item_menu, menu)
     }
 
-
     override fun onItemClick(sessionWithStepsAndExercises: SessionWithStepsAndExercises) {
-        val action = SessionFragmentDirections.actionSessionFragmentToPracticeFragment(
-            sessionWithStepsAndExercises
-        )
-        navController.navigate(action)
+        sessionViewModel.navigateToPractice(sessionWithStepsAndExercises, navController)
         sessionViewModel.setBottomNavigationViewsCheckable(bottomNavigationView, 2, true)
     }
 
@@ -98,19 +90,14 @@ class SessionFragment : Fragment(R.layout.fragment_workout_session),
     }
 
     override fun onItemButtonMenuEdit(sessionWithStepsAndExercises: SessionWithStepsAndExercises) {
-        val action = SessionFragmentDirections.actionSessionFragmentToCreateSessionFragment(
-            sessionWithStepsAndExercises
-        )
-        navController.navigate(action)
+        sessionViewModel.navigateToCreate(sessionWithStepsAndExercises, navController)
         sessionViewModel.setBottomNavigationViewsCheckable(bottomNavigationView, 1, false)
-        sessionViewModel.setFloatingActionButtonColor(floatingActionButton, this.requireView())
+        sessionViewModel.setFloatingActionButtonColor(floatingActionButton)
     }
 
     override fun onItemButtonMenuDuplicate(sessionWithStepsAndExercises: SessionWithStepsAndExercises) {
         sessionViewModel.onDuplicateSessionClicked(sessionWithStepsAndExercises)
-            val action = SessionFragmentDirections.actionSessionFragmentToCreateSessionFragment(sessionWithStepsAndExercises)
-            navController.navigate(action)
+        sessionViewModel.navigateToCreate(sessionWithStepsAndExercises, navController)
     }
-
 
 }

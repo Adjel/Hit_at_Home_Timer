@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import androidx.savedstate.SavedStateRegistryOwner
 import com.HiitHomeTimer.repository.SessionRepository
 import com.HiitHomeTimer.repository.localdata.entities.Session
@@ -25,14 +27,15 @@ class SessionViewModel(
 
 
     fun onDuplicateSessionClicked(sessionWithStepsAndExercises: SessionWithStepsAndExercises)  =
-        viewModelScope.launch { insertSessionWithStepsAndExercises(sessionWithStepsAndExercises)
+        viewModelScope.launch { insertSessionWithStepsAndExercises(sessionWithStepsAndExercises.copy())
         }
 
-
-    // Using LiveData and caching what allSteps returns has several benefits:
-    // - We can put an observer on the data (instead of polling for changes) and only update the
-    //   the UI when the data actually changes.
-    // - Repository is completely separated from the UI through the ViewModel.
+    /**
+     * @LiveData and caching what allSteps returns has several benefits:
+     *  We can put an observer on the data (instead of polling for changes) and only update the
+     * the UI when the data actually changes.
+     * Repository is completely separated from the UI through the ViewModel.
+     */
     val allSessionWithStepsAndExercises: LiveData<List<SessionWithStepsAndExercises>> =
         repository.allSessionWithStepsAndExercises.asLiveData()
 
@@ -40,9 +43,7 @@ class SessionViewModel(
         repository.deleteSession(session)
     }
 
-
-    // bottomNavigationView icons triggers and logic
-
+    /** bottomNavigationView icons triggers and logic */
     fun setBottomNavigationViewsCheckable(
         bottomNavigationView: BottomNavigationView,
         itemId: Int,
@@ -53,10 +54,23 @@ class SessionViewModel(
     }
 
     fun setFloatingActionButtonColor(
-        floatingActionButton: FloatingActionButton,
-        view: View,
+        floatingActionButton: FloatingActionButton
     ) {
         floatingActionButton.drawable.setTint(ContextCompat.getColor(floatingActionButton.context, R.color.ivory))
+    }
+
+    fun navigateToPractice(sessionWithStepsAndExercises: SessionWithStepsAndExercises, navController: NavController) {
+        val action = SessionFragmentDirections.actionSessionFragmentToPracticeFragment(
+            sessionWithStepsAndExercises
+        )
+        navController.navigate(action)
+    }
+
+    fun navigateToCreate(sessionWithStepsAndExercises: SessionWithStepsAndExercises, navController: NavController) {
+        val action = SessionFragmentDirections.actionSessionFragmentToCreateSessionFragment(
+            sessionWithStepsAndExercises
+        )
+        navController.navigate(action)
     }
 }
 

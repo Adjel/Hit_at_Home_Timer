@@ -29,7 +29,8 @@
         <argument
             android:name="sessionToPractice"
             app:argType="com.HiitHomeTimer.repository.localdata.relations.SessionWithStepsAndExercises"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/createSessionFragment"

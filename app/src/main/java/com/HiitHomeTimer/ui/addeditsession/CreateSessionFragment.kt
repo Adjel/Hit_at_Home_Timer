@@ -12,7 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.HiitHomeTimer.di.SessionApplication
+import com.HiitHomeTimer.di.HiitHomeTimerApplication
 import com.hiithometimer.R
 import com.hiithometimer.databinding.FragmentCreateSessionBinding
 
@@ -25,7 +25,7 @@ class CreateSessionFragment : Fragment(R.layout.fragment_create_session) {
     val createSessionViewModel: CreateSessionViewModel by viewModels{
         CreateSessionViewModelFactory(
             this,
-            (requireActivity().application as SessionApplication).repository,
+            (requireActivity().application as HiitHomeTimerApplication).repository,
             args.toBundle()
         )
     }

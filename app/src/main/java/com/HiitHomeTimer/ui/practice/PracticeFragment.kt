@@ -10,7 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.HiitHomeTimer.di.SessionApplication
+import com.HiitHomeTimer.di.HiitHomeTimerApplication
 import com.HiitHomeTimer.repository.localdata.entities.Exercise
 import com.HiitHomeTimer.repository.localdata.entities.Step
 import com.hiithometimer.R
@@ -22,7 +22,7 @@ class PracticeFragment : Fragment(R.layout.fragment_practice) {
     private val args: PracticeFragmentArgs by navArgs()
     private val practiceViewModel: PracticeViewModel by viewModels {
         PracticeViewModelFactory(
-            ((requireActivity().application as SessionApplication).repository),
+            ((requireActivity().application as HiitHomeTimerApplication).repository),
             this,
             args.toBundle()
         )
